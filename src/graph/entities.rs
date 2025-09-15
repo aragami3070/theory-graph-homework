@@ -19,3 +19,13 @@ where
         }
     }
 }
+
+impl<T> Edge<T> {
+    pub fn new(number: Index, weight: Weight, value: T) -> Self {
+        Self {
+            number,
+            weight,
+            value,
+        }
+    }
+}
