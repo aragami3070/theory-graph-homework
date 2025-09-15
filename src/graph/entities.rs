@@ -30,9 +30,7 @@ where
         write!(
             f,
             "Number: {},\nWeight: {},\nValue: {}",
-            self.number,
-            self.weight,
-            self.value
+            self.number, self.weight, self.value
         )
     }
 }
@@ -49,6 +47,12 @@ impl<T> Edge<T> {
 
 pub struct Adjacency<T> {
     edges: Vec<Option<Edge<T>>>,
+}
+
+impl<T> Default for Adjacency<T> {
+    fn default() -> Self {
+        Self { edges: Vec::new() }
+    }
 }
 
 impl<T> Adjacency<T> {
