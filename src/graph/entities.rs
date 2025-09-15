@@ -3,6 +3,8 @@ use std::{collections::HashMap, fmt::Display};
 type Index = u32;
 type Weight = u32;
 
+// Edge part
+
 pub struct Edge<T> {
     pub number: Index,
     pub weight: Weight,
@@ -29,7 +31,7 @@ where
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Number: {},\nWeight: {},\nValue: {}\n",
+            "  Edge: {{\n    Number: {},\n    Weight: {},\n    Value: {}\n  }}",
             self.number, self.weight, self.value
         )
     }
@@ -46,6 +48,8 @@ impl<T> Edge<T> {
     }
 }
 
+// Adjacency part
+
 pub struct Adjacency<T> {
     edges: Vec<Option<Edge<T>>>,
 }
@@ -53,6 +57,22 @@ pub struct Adjacency<T> {
 impl<T> Default for Adjacency<T> {
     fn default() -> Self {
         Self { edges: Vec::new() }
+    }
+}
+
+impl<T> Display for Adjacency<T> 
+where 
+	T: Display
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut print_format = String::from("[\n");
+        for edge in &self.edges {
+            if let Some(ed) = edge {
+                print_format.push_str(format!("{ed},\n").as_str());
+            }
+        }
+		print_format.push_str("]\n");
+        write!(f, "{}", print_format)
     }
 }
 
