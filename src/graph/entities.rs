@@ -29,3 +29,15 @@ impl<T> Edge<T> {
         }
     }
 }
+
+pub struct Adjacency<T> {
+    edges: Vec<Option<Edge<T>>>,
+}
+
+impl<T> Adjacency<T> {
+    pub fn new(edge: Edge<T>) -> Self {
+        Self {
+            edges: vec![Some(edge)],
+        }
+    }
+}
