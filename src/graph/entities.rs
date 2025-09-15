@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Display};
 
 type Index = u32;
 type Weight = u32;
@@ -19,6 +19,21 @@ where
             weight: 0,
             value: T::default(),
         }
+    }
+}
+
+impl<T> Display for Edge<T>
+where
+    T: Display,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Number: {},\nWeight: {},\nValue: {}",
+            self.number,
+            self.weight,
+            self.value
+        )
     }
 }
 
