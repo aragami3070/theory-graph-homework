@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 type Index = u32;
 type Weight = u32;
 
@@ -40,4 +42,8 @@ impl<T> Adjacency<T> {
             edges: vec![Some(edge)],
         }
     }
+}
+
+pub struct AdjacencyList<T> {
+    edges: HashMap<Index, Adjacency<T>>,
 }
