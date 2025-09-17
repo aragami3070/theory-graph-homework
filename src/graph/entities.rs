@@ -60,9 +60,9 @@ impl<T> Default for Adjacency<T> {
     }
 }
 
-impl<T> Display for Adjacency<T> 
-where 
-	T: Display
+impl<T> Display for Adjacency<T>
+where
+    T: Display,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut print_format = String::from("[\n");
@@ -71,7 +71,7 @@ where
                 print_format.push_str(format!("{ed},\n").as_str());
             }
         }
-		print_format.push_str("]\n");
+        print_format.push_str("]");
         write!(f, "{}", print_format)
     }
 }
@@ -87,6 +87,19 @@ impl<T> Adjacency<T> {
 
 pub struct AdjacencyList<T> {
     edges: HashMap<Index, Adjacency<T>>,
+}
+
+impl<T> Display for AdjacencyList<T>
+where
+    T: Display,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut print_format = String::new();
+        for adjacency in &self.edges {
+            print_format.push_str(format!("{}: {},\n", adjacency.0, adjacency.1).as_str());
+        }
+        write!(f, "{}", print_format)
+    }
 }
 
 impl<T> Default for AdjacencyList<T> {
