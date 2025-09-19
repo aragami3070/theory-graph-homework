@@ -14,6 +14,23 @@ pub struct Edge<T> {
     pub value: T,
 }
 
+impl<T> PartialEq for Edge<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.number == other.number
+    }
+    fn ne(&self, other: &Self) -> bool {
+        self.number != other.number
+    }
+}
+
+impl<T> Eq for Edge<T> {}
+
+impl<T> Hash for Edge<T> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.number.hash(state);
+    }
+}
+
 impl<T> Default for Edge<T>
 where
     T: Default,
