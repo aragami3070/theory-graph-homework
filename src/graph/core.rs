@@ -1,5 +1,8 @@
-use std::{collections::HashMap, fmt::Display};
-
+use std::{
+    collections::{HashMap, HashSet},
+    fmt::Display,
+    hash::Hash,
+};
 type Index = u32;
 type Weight = u32;
 
@@ -51,12 +54,14 @@ impl<T> Edge<T> {
 // Adjacency part
 
 pub struct Adjacency<T> {
-    edges: Vec<Option<Edge<T>>>,
+    edges: HashSet<Edge<T>>,
 }
 
 impl<T> Default for Adjacency<T> {
     fn default() -> Self {
-        Self { edges: Vec::new() }
+        Self {
+            edges: HashSet::new(),
+        }
     }
 }
 
@@ -67,9 +72,7 @@ where
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut print_format = String::from("[\n");
         for edge in &self.edges {
-            if let Some(ed) = edge {
-                print_format.push_str(format!("{ed},\n").as_str());
-            }
+            print_format.push_str(format!("{edge},\n").as_str());
         }
         print_format.push_str("]");
         write!(f, "{}", print_format)
@@ -79,9 +82,9 @@ where
 impl<T> Adjacency<T> {
     /// Creates a new [`Adjacency<T>`].
     pub fn new(edge: Edge<T>) -> Self {
-        Self {
-            edges: vec![Some(edge)],
-        }
+        let mut new_edges = HashSet::new();
+        new_edges.insert(edge);
+        Self { edges: new_edges }
     }
 }
 
