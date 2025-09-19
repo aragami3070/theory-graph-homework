@@ -97,11 +97,16 @@ where
 }
 
 impl<T> Adjacency<T> {
-    /// Creates a new [`Adjacency<T>`].
+    /// Creates a new [`Adjacency<T>`]
     pub fn new(edge: Edge<T>) -> Self {
         let mut new_edges = HashSet::new();
         new_edges.insert(edge);
         Self { edges: new_edges }
+    }
+
+    /// Add in end new [`Edge<T>`]
+    pub fn push(&mut self, edge: Edge<T>) {
+        self.edges.insert(edge);
     }
 }
 
@@ -131,7 +136,7 @@ impl<T> Default for AdjacencyList<T> {
 }
 
 impl<T> AdjacencyList<T> {
-    /// Creates a new [`AdjacencyList<T>`].
+    /// Creates a new [`AdjacencyList<T>`]
     pub fn new(index_edge: Index, edge_adjacency: Adjacency<T>) -> Self {
         let mut new_edges: HashMap<Index, Adjacency<T>> = HashMap::new();
         new_edges.insert(index_edge, edge_adjacency);
