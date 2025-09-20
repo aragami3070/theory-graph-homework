@@ -137,10 +137,14 @@ impl<T> Default for AdjacencyList<T> {
 
 impl<T> AdjacencyList<T> {
     /// Creates a new [`AdjacencyList<T>`]
-    pub fn new(index_edge: Index, edge_adjacency: Adjacency<T>) -> Self {
+    pub fn new(index_node: Index, edge_adjacency: Adjacency<T>) -> Self {
         let mut new_edges: HashMap<Index, Adjacency<T>> = HashMap::new();
-        new_edges.insert(index_edge, edge_adjacency);
+        new_edges.insert(index_node, edge_adjacency);
 
         Self { edges: new_edges }
+    }
+
+    pub fn add_node(&mut self, index_node: Index) {
+        self.edges.insert(index_node, Adjacency::default());
     }
 }
