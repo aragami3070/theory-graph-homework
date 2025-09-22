@@ -247,4 +247,12 @@ where
             }
         }
     }
+
+    pub fn delete_edge(&mut self, node: &Node<T>, edge_index: &Index) -> Option<Edge<T>> {
+        if let Some(adjacency) = self.edges.get_mut(&node.number) {
+            adjacency.delete(*edge_index)
+        } else {
+            None
+        }
+    }
 }
