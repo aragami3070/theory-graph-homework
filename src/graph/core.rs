@@ -26,6 +26,7 @@ where
         }
     }
 }
+
 impl<T> Node<T> {
     pub fn new(index: Index, value: T) -> Self {
         Self {
@@ -52,9 +53,6 @@ where
 {
     fn eq(&self, other: &Self) -> bool {
         self.node.number == other.node.number
-    }
-    fn ne(&self, other: &Self) -> bool {
-        self.node.number != other.node.number
     }
 }
 
@@ -139,8 +137,8 @@ where
         for edge in &self.edges {
             print_format.push_str(format!("{edge},\n").as_str());
         }
-        print_format.push_str("]");
-        write!(f, "{}", print_format)
+        print_format.push(']');
+        write!(f, "{print_format}")
     }
 }
 
@@ -158,6 +156,21 @@ where
     /// Add in end new [`Edge<T>`]
     fn push(&mut self, edge: Edge<T>) {
         self.edges.insert(edge);
+    }
+
+    fn delete(&mut self, edge_index: Index) -> Option<Edge<T>> {
+        let rm_edge = self
+            .edges
+            .iter()
+            .find(|e| e.node.number == edge_index)
+            .cloned();
+
+        if let Some(rm_e) = rm_edge {
+            self.edges.remove(&rm_e);
+            Some(rm_e)
+        } else {
+            None
+        }
     }
 }
 
@@ -181,7 +194,7 @@ where
         for adjacency in &self.edges {
             print_format.push_str(format!("{}: {},\n", adjacency.0, adjacency.1).as_str());
         }
-        write!(f, "{}", print_format)
+        write!(f, "{print_format}")
     }
 }
 
@@ -201,14 +214,14 @@ impl<T> AdjacencyList<T>
 where
     T: Clone,
 {
-    /// Creates a new not directed [`AdjacencyList<T>`]
+    /// Creates a new [`AdjacencyList<T>`]
     pub fn new(index_node: Index, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
         let mut new_edges: HashMap<Index, Adjacency<T>> = HashMap::new();
         new_edges.insert(index_node, edge_adjacency);
 
         Self {
             edges: new_edges,
-            is_directed: is_directed,
+            is_directed,
         }
     }
 
@@ -216,7 +229,7 @@ where
         self.edges.insert(index_node, Adjacency::default());
     }
 
-    pub fn add_edge(&mut self, node: Node<T>, new_edge: Edge<T>) {
+    pub fn add_edge(&mut self, node: &Node<T>, new_edge: &Edge<T>) {
         if let Some(edges) = self.edges.get_mut(&node.number) {
             edges.push(new_edge.clone());
         } else {
