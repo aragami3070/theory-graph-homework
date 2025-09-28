@@ -260,4 +260,12 @@ where
 		todo!()
 		// (first, second)
     }
+
+	pub fn delete_node(&mut self, node: &Node<T>) -> Option<Adjacency<T>> {
+		// Remove edges from other adjacencies
+		for (_, adjacency) in self.edges.iter_mut() {
+			adjacency.edges.retain(|n| n.node.number != node.number);
+		}
+		self.edges.remove(&node.number)
+	}
 }
