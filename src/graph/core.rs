@@ -1,14 +1,20 @@
 use std::{
     collections::{HashMap, HashSet},
+    error::Error,
     fmt::Display,
+    fs::File,
     hash::Hash,
+    io::{BufWriter, Write},
 };
+
+use serde::Serialize;
 type Index = u32;
 type Weight = u32;
+type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 // Node part
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct Node<T> {
     pub number: Index,
     pub value: T,
@@ -38,7 +44,7 @@ impl<T> Node<T> {
 
 // Edge part
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct Edge<T>
 where
     T: Clone,
@@ -109,7 +115,7 @@ where
 
 // Adjacency part
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct Adjacency<T>
 where
     T: Clone,
@@ -177,12 +183,12 @@ where
 
 // AdjacencyList part
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct AdjacencyList<T>
 where
     T: Clone,
 {
-    edges: HashMap<Index, Adjacency<T>>,
+    adjacency: HashMap<Index, Adjacency<T>>,
     is_directed: bool,
 }
 
@@ -193,7 +199,7 @@ where
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut print_format = String::new();
-        for adjacency in &self.edges {
+        for adjacency in &self.adjacency {
             print_format.push_str(format!("{}: {},\n", adjacency.0, adjacency.1).as_str());
         }
         write!(f, "{print_format}")
@@ -206,7 +212,7 @@ where
 {
     fn default() -> Self {
         Self {
-            edges: HashMap::new(),
+            adjacency: HashMap::new(),
             is_directed: false,
         }
     }
@@ -215,6 +221,7 @@ where
 impl<T> AdjacencyList<T>
 where
     T: Clone,
+    T: Serialize,
 {
     /// Creates a new [`AdjacencyList<T>`]
     pub fn new(index_node: Index, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
@@ -222,29 +229,29 @@ where
         new_edges.insert(index_node, edge_adjacency);
 
         Self {
-            edges: new_edges,
+            adjacency: new_edges,
             is_directed,
         }
     }
 
     pub fn add_node(&mut self, index_node: Index) {
-        self.edges.insert(index_node, Adjacency::default());
+        self.adjacency.insert(index_node, Adjacency::default());
     }
 
     pub fn add_edge(&mut self, node: &Node<T>, new_edge: &Edge<T>) {
-        if let Some(edges) = self.edges.get_mut(&node.number) {
+        if let Some(edges) = self.adjacency.get_mut(&node.number) {
             edges.push(new_edge.clone());
         } else {
-            self.edges
+            self.adjacency
                 .insert(node.number, Adjacency::new(new_edge.clone()));
         }
 
         if !self.is_directed {
             let duplicate_edge = Edge::new(&node.number, new_edge.weight, &node.value);
-            if let Some(edges) = self.edges.get_mut(&new_edge.node.number) {
+            if let Some(edges) = self.adjacency.get_mut(&new_edge.node.number) {
                 edges.push(duplicate_edge);
             } else {
-                self.edges
+                self.adjacency
                     .insert(new_edge.node.number, Adjacency::new(duplicate_edge));
             }
         }
@@ -255,7 +262,7 @@ where
         node: &Node<T>,
         edge_index: &Index,
     ) -> (Option<Edge<T>>, Option<Edge<T>>) {
-        let first = if let Some(adjacency) = self.edges.get_mut(&node.number) {
+        let first = if let Some(adjacency) = self.adjacency.get_mut(&node.number) {
             adjacency.delete(*edge_index)
         } else {
             None
@@ -265,7 +272,7 @@ where
             (first, None)
         } else {
             let second = if first.is_some()
-                && let Some(adjacency) = self.edges.get_mut(&first.clone().unwrap().node.number)
+                && let Some(adjacency) = self.adjacency.get_mut(&first.clone().unwrap().node.number)
             {
                 adjacency.delete(node.number)
             } else {
@@ -277,9 +284,18 @@ where
 
     pub fn delete_node(&mut self, node: &Node<T>) -> Option<Adjacency<T>> {
         // Remove edges from other adjacencies
-        for (_, adjacency) in self.edges.iter_mut() {
+        for (_, adjacency) in self.adjacency.iter_mut() {
             adjacency.edges.retain(|n| n.node.number != node.number);
         }
-        self.edges.remove(&node.number)
+        self.adjacency.remove(&node.number)
+    }
+
+    pub fn write_in_file(&self, path: &str) -> Result<()> {
+        let file = File::create(path)?;
+        let mut writer = BufWriter::new(file);
+
+        serde_json::to_writer_pretty(&mut writer, &self)?;
+        writer.flush()?;
+        Ok(())
     }
 }
