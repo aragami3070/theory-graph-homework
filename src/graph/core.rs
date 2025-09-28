@@ -109,6 +109,7 @@ where
 
 // Adjacency part
 
+#[derive(Clone)]
 pub struct Adjacency<T>
 where
     T: Clone,
@@ -176,6 +177,7 @@ where
 
 // AdjacencyList part
 
+#[derive(Clone)]
 pub struct AdjacencyList<T>
 where
     T: Clone,
@@ -248,24 +250,36 @@ where
         }
     }
 
-    pub fn delete_edge(&mut self, node: &Node<T>, edge_index: &Index) -> (Option<Edge<T>>, Option<Edge<T>>) {
+    pub fn delete_edge(
+        &mut self,
+        node: &Node<T>,
+        edge_index: &Index,
+    ) -> (Option<Edge<T>>, Option<Edge<T>>) {
         let first = if let Some(adjacency) = self.edges.get_mut(&node.number) {
             adjacency.delete(*edge_index)
         } else {
             None
         };
-		let second = if todo!() {
-		    todo!()
-		};
-		todo!()
-		// (first, second)
+
+        if self.is_directed {
+            (first, None)
+        } else {
+            let second = if first.is_some()
+                && let Some(adjacency) = self.edges.get_mut(&first.clone().unwrap().node.number)
+            {
+                adjacency.delete(node.number)
+            } else {
+                None
+            };
+            (first, second)
+        }
     }
 
-	pub fn delete_node(&mut self, node: &Node<T>) -> Option<Adjacency<T>> {
-		// Remove edges from other adjacencies
-		for (_, adjacency) in self.edges.iter_mut() {
-			adjacency.edges.retain(|n| n.node.number != node.number);
-		}
-		self.edges.remove(&node.number)
-	}
+    pub fn delete_node(&mut self, node: &Node<T>) -> Option<Adjacency<T>> {
+        // Remove edges from other adjacencies
+        for (_, adjacency) in self.edges.iter_mut() {
+            adjacency.edges.retain(|n| n.node.number != node.number);
+        }
+        self.edges.remove(&node.number)
+    }
 }
