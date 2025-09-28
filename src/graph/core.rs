@@ -4,17 +4,17 @@ use std::{
     fmt::Display,
     fs::File,
     hash::Hash,
-    io::{BufWriter, Write},
+    io::{BufReader, BufWriter, Write},
 };
 
-use serde::Serialize;
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 type Index = u32;
 type Weight = u32;
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 // Node part
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Node<T> {
     pub number: Index,
     pub value: T,
@@ -44,7 +44,7 @@ impl<T> Node<T> {
 
 // Edge part
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Edge<T>
 where
     T: Clone,
@@ -75,8 +75,7 @@ where
 
 impl<T> Default for Edge<T>
 where
-    T: Default,
-    T: Clone,
+    T: Default + Clone,
 {
     fn default() -> Self {
         Edge::<T> {
@@ -88,8 +87,7 @@ where
 
 impl<T> Display for Edge<T>
 where
-    T: Display,
-    T: Clone,
+    T: Display + Clone,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -115,7 +113,7 @@ where
 
 // Adjacency part
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Adjacency<T>
 where
     T: Clone,
@@ -136,8 +134,7 @@ where
 
 impl<T> Display for Adjacency<T>
 where
-    T: Display,
-    T: Clone,
+    T: Display + Clone,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut print_format = String::from("[\n");
@@ -183,7 +180,7 @@ where
 
 // AdjacencyList part
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct AdjacencyList<T>
 where
     T: Clone,
@@ -194,8 +191,7 @@ where
 
 impl<T> Display for AdjacencyList<T>
 where
-    T: Display,
-    T: Clone,
+    T: Display + Clone,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut print_format = String::new();
@@ -220,8 +216,7 @@ where
 
 impl<T> AdjacencyList<T>
 where
-    T: Clone,
-    T: Serialize,
+    T: Clone + Serialize + DeserializeOwned,
 {
     /// Creates a new [`AdjacencyList<T>`]
     pub fn new(index_node: Index, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
@@ -297,5 +292,13 @@ where
         serde_json::to_writer_pretty(&mut writer, &self)?;
         writer.flush()?;
         Ok(())
+    }
+
+    pub fn new_from_file(&self, path: &str) -> Result<AdjacencyList<T>> {
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+
+        let readed: AdjacencyList<T> = serde_json::from_reader(reader)?;
+        Ok(readed)
     }
 }

@@ -3,10 +3,6 @@ use std::{io::Write, process};
 
 use graph::core;
 fn main() {
-    if let Err(err) = std::io::stdout().flush() {
-        eprintln!("Error: {err}");
-        process::exit(1);
-    }
     let node_a = core::Node::<u32>::new(1, 20);
     let node_b = core::Node::<u32>::new(2, 23);
     let node_c = core::Node::<u32>::new(3, 32);
@@ -47,8 +43,21 @@ fn main() {
     adjacency_list.delete_node(&node_c);
     println!("{adjacency_list}");
 
+	println!("Запись в файл");
     if let Err(err) = adjacency_list.write_in_file("assets/output.json") {
         eprintln!("Error: {err}");
         process::exit(1);
     }
+	println!("Успешно");
+
+	println!("Создание из файла");
+    adjacency_list = match adjacency_list.new_from_file("assets/output.json") {
+        Ok(list) => list,
+        Err(err) => {
+            eprintln!("Error: {err}");
+            process::exit(1);
+        }
+    };
+
+	println!("{adjacency_list}")
 }
