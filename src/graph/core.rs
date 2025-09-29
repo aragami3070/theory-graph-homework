@@ -1,20 +1,20 @@
 use std::{
     collections::{HashMap, HashSet},
     error::Error,
-    fmt::Display,
+    fmt::{Debug, Display},
     fs::File,
     hash::Hash,
     io::{BufReader, BufWriter, Write},
 };
 
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 type Index = u32;
 type Weight = u32;
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 // Node part
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Node<T> {
     pub number: Index,
     pub value: T,
@@ -44,7 +44,7 @@ impl<T> Node<T> {
 
 // Edge part
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Edge<T>
 where
     T: Clone,
@@ -113,7 +113,7 @@ where
 
 // Adjacency part
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Adjacency<T>
 where
     T: Clone,
@@ -180,7 +180,7 @@ where
 
 // AdjacencyList part
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AdjacencyList<T>
 where
     T: Clone,
@@ -216,12 +216,20 @@ where
 
 impl<T> AdjacencyList<T>
 where
-    T: Clone + Serialize + DeserializeOwned,
+    T: Clone + Serialize + DeserializeOwned + Debug,
 {
     /// Creates a new [`AdjacencyList<T>`]
-    pub fn new(index_node: Index, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
+    pub fn new(node: &Node<T>, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
         let mut new_edges: HashMap<Index, Adjacency<T>> = HashMap::new();
-        new_edges.insert(index_node, edge_adjacency);
+        if !is_directed {
+            for i in &edge_adjacency.edges {
+                let mut edge = i.clone();
+                edge.node = node.clone();
+                let other_adjacencies = Adjacency::new(edge);
+                new_edges.insert(i.node.number, other_adjacencies);
+            }
+        }
+        new_edges.insert(node.number, edge_adjacency);
 
         Self {
             adjacency: new_edges,
@@ -230,7 +238,9 @@ where
     }
 
     pub fn add_node(&mut self, index_node: Index) {
-        self.adjacency.insert(index_node, Adjacency::default());
+        if self.adjacency.get(&index_node).is_none() {
+            self.adjacency.insert(index_node, Adjacency::default());
+        }
     }
 
     pub fn add_edge(&mut self, node: &Node<T>, new_edge: &Edge<T>) {

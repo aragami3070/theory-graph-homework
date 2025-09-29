@@ -1,5 +1,5 @@
 mod graph;
-use std::{io::Write, process};
+use std::process;
 
 use graph::core;
 fn main() {
@@ -16,7 +16,7 @@ fn main() {
     let edge5 = core::Edge::<u32>::new(&node_e.number, 15, &node_e.value);
 
     let adjacency = core::Adjacency::<u32>::new(edge2);
-    let mut adjacency_list = core::AdjacencyList::<u32>::new(1, adjacency, true);
+    let mut adjacency_list = core::AdjacencyList::<u32>::new(&node_a, adjacency, false);
 
     println!("Добавление вершин");
     adjacency_list.add_node(node_b.number);
