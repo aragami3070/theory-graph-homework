@@ -227,10 +227,10 @@ where
     }
 }
 
-// AdjacencyList part
+// Graph part
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AdjacencyList<T>
+pub struct Graph<T>
 where
     T: Clone,
 {
@@ -238,7 +238,7 @@ where
     is_directed: bool,
 }
 
-impl<T> Display for AdjacencyList<T>
+impl<T> Display for Graph<T>
 where
     T: Display + Clone,
 {
@@ -251,7 +251,7 @@ where
     }
 }
 
-impl<T> Default for AdjacencyList<T>
+impl<T> Default for Graph<T>
 where
     T: Clone,
 {
@@ -263,7 +263,7 @@ where
     }
 }
 
-impl<T> AdjacencyList<T>
+impl<T> Graph<T>
 where
     T: Clone + Serialize + DeserializeOwned + Debug,
 {
@@ -367,11 +367,11 @@ where
         Ok(())
     }
 
-    pub fn new_from_file(&self, path: &str) -> Result<AdjacencyList<T>> {
+    pub fn new_from_file(&self, path: &str) -> Result<Graph<T>> {
         let file = File::open(path)?;
         let reader = BufReader::new(file);
 
-        let readed: AdjacencyList<T> = serde_json::from_reader(reader)?;
+        let readed: Graph<T> = serde_json::from_reader(reader)?;
         Ok(readed)
     }
 }
