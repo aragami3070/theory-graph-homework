@@ -16,6 +16,16 @@ struct GraphError {
 #[derive(Debug)]
 enum GraphKindError {
     NodeAlreadyExist,
+    NodeNotFound,
+}
+
+impl GraphError {
+    pub fn new(kind: GraphKindError, description: &str) -> Self {
+        Self {
+            kind,
+            description: description.to_string(),
+        }
+    }
 }
 
 impl Error for GraphError {
@@ -30,7 +40,14 @@ impl Display for GraphError {
             GraphKindError::NodeAlreadyExist => {
                 write!(
                     f,
-                    "this node already exist\nDescription: {}",
+                    "this node already exist in graph\nDescription: {}",
+                    &self.description
+                )
+            }
+            GraphKindError::NodeNotFound => {
+                write!(
+                    f,
+                    "this node not found in graph\nDescription: {}",
                     &self.description
                 )
             }
@@ -205,7 +222,7 @@ where
             self.edges.remove(&rm_e);
             Ok(Some(rm_e))
         } else {
-            Ok(None)
+            Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")))
         }
     }
 }
@@ -279,8 +296,13 @@ where
     pub fn add_node(&mut self, index_node: Index) -> Result<()> {
         if self.adjacency.get(&index_node).is_none() {
             self.adjacency.insert(index_node, Adjacency::default());
+            Ok(())
+        } else {
+            Err(Box::new(GraphError::new(
+                GraphKindError::NodeAlreadyExist,
+                "",
+            )))
         }
-        Ok(())
     }
 
     pub fn add_edge(&mut self, node: &Node<T>, new_edge: &Edge<T>) -> Result<()> {
@@ -311,7 +333,7 @@ where
         let first = if let Some(adjacency) = self.adjacency.get_mut(&node.number) {
             adjacency.delete(*edge_index)?
         } else {
-            None
+            return Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")));
         };
 
         if self.is_directed {
@@ -322,7 +344,7 @@ where
             {
                 adjacency.delete(node.number)?
             } else {
-                None
+                return Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")));
             };
             Ok((first, second))
         }
