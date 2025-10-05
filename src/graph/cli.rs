@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::graph::core::{Adjacency, Graph, Edge, Node};
+use crate::graph::core::{Adjacency, Edge, Graph, Node};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -10,8 +10,7 @@ pub fn cli_interface() -> Result<()> {
     let mut input = String::new();
     std::io::stdin().read_line(&mut input)?;
     let is_directed: bool = input.trim().parse()?;
-    let mut graph: Graph<u32> =
-        Graph::new(None, Adjacency::default(), is_directed);
+    let mut graph: Graph<u32> = Graph::new(None, Adjacency::default(), is_directed);
 
     loop {
         println!("1. Добавить вершину");
@@ -79,42 +78,51 @@ pub fn cli_interface() -> Result<()> {
             3 => {
                 println!("Введите номер вершины:");
 
-				input.clear();
-				std::io::stdin().read_line(&mut input)?;
-				let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+                let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
 
-				graph.delete_node(&node)?;
-				println!("{graph}")
+                graph.delete_node(&node)?;
+                println!("{graph}")
             }
 
             4 => {
                 println!("Введите номер вершины:");
 
-				input.clear();
-				std::io::stdin().read_line(&mut input)?;
-				let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+                let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
 
                 println!("Введите номер вершины куда идет ребро:");
 
-				input.clear();
-				std::io::stdin().read_line(&mut input)?;
-				let edge_index: u32 = input.trim().parse()?;
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+                let edge_index: u32 = input.trim().parse()?;
 
-				graph.delete_edge(&node, &edge_index)?;
-				println!("{graph}")
+                graph.delete_edge(&node, &edge_index)?;
+                println!("{graph}")
             }
+
             5 => {
                 println!("Введите путь до файла:");
 
-				input.clear();
-				std::io::stdin().read_line(&mut input)?;
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
 
-				graph.write_in_file(&input)?;
-				println!("Граф сохранен")
+                graph.write_in_file(&input)?;
+                println!("Граф сохранен")
             }
+
             6 => {
-                todo!()
+                println!("Введите путь до файла:");
+
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+
+                graph = graph.new_from_file(&input)?;
+				println!("{graph}")
             }
+
             _ => {
                 break;
             }

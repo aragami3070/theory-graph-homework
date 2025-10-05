@@ -59,6 +59,7 @@ use serde::{Deserialize, Serialize, de::DeserializeOwned};
 type Index = u32;
 type Weight = u32;
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
+type PairEdges<T> = (Option<Edge<T>>, Option<Edge<T>>);
 
 // Node part
 
@@ -294,7 +295,7 @@ where
     }
 
     pub fn add_node(&mut self, index_node: Index) -> Result<()> {
-        if self.adjacency.get(&index_node).is_none() {
+        if self.adjacency.contains_key(&index_node) {
             self.adjacency.insert(index_node, Adjacency::default());
             Ok(())
         } else {
@@ -325,11 +326,7 @@ where
         Ok(())
     }
 
-    pub fn delete_edge(
-        &mut self,
-        node: &Node<T>,
-        edge_index: &Index,
-    ) -> Result<(Option<Edge<T>>, Option<Edge<T>>)> {
+    pub fn delete_edge(&mut self, node: &Node<T>, edge_index: &Index) -> Result<PairEdges<T>> {
         let first = if let Some(adjacency) = self.adjacency.get_mut(&node.number) {
             adjacency.delete(*edge_index)?
         } else {
