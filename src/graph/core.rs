@@ -219,22 +219,29 @@ where
     T: Clone + Serialize + DeserializeOwned + Debug,
 {
     /// Creates a new [`AdjacencyList<T>`]
-    pub fn new(node: &Node<T>, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
+    pub fn new(node: Option<Node<T>>, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
         let mut new_edges: HashMap<Index, Adjacency<T>> = HashMap::new();
-        if !is_directed {
-            for i in &edge_adjacency.edges {
-                let mut edge = i.clone();
-                edge.node = node.clone();
-                let other_adjacencies = Adjacency::new(edge);
-                new_edges.insert(i.node.number, other_adjacencies);
+
+        if let Some(n) = node {
+            if !is_directed {
+                for i in &edge_adjacency.edges {
+                    let mut edge = i.clone();
+                    edge.node = n.clone();
+                    let other_adjacencies = Adjacency::new(edge);
+                    new_edges.insert(i.node.number, other_adjacencies);
+                }
             }
+            new_edges.insert(n.number, edge_adjacency);
         }
-        new_edges.insert(node.number, edge_adjacency);
 
         Self {
             adjacency: new_edges,
             is_directed,
         }
+    }
+
+    pub fn get_is_directed(&self) -> bool {
+        self.is_directed
     }
 
     pub fn add_node(&mut self, index_node: Index) {
