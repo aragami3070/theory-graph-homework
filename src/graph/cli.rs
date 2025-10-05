@@ -31,7 +31,7 @@ pub fn cli_interface() -> Result<()> {
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
                 let node_number: u32 = input.trim().parse()?;
-                adjacency_list.add_node(node_number);
+                adjacency_list.add_node(node_number)?;
                 println!("{adjacency_list}")
             }
             2 => {
@@ -61,19 +61,23 @@ pub fn cli_interface() -> Result<()> {
                 let node_number: u32 = input.trim().parse()?;
 
                 if adjacency_list.get_is_directed() {
-                    adjacency_list.add_edge(&Node::new(node_number, 0), &new_edge);
+                    adjacency_list.add_edge(&Node::new(node_number, 0), &new_edge)?;
                 } else {
                     println!("Введите ее значение:");
                     input.clear();
                     std::io::stdin().read_line(&mut input)?;
                     let node_value: u32 = input.trim().parse()?;
 
-                    adjacency_list.add_edge(&Node::new(node_number, node_value), &new_edge);
+                    adjacency_list.add_edge(&Node::new(node_number, node_value), &new_edge)?;
                 }
                 println!("{adjacency_list}")
             }
             3 => {
-                todo!()
+                println!("Введите номер вершины:");
+				input.clear();
+				std::io::stdin().read_line(&mut input)?;
+				let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
+				adjacency_list.delete_node(&node)?;
             }
             4 => {
                 todo!()
