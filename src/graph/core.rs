@@ -7,6 +7,37 @@ use std::{
     io::{BufReader, BufWriter, Write},
 };
 
+#[derive(Debug)]
+struct GraphError {
+    kind: GraphKindError,
+    description: String,
+}
+
+#[derive(Debug)]
+enum GraphKindError {
+    NodeAlreadyExist,
+}
+
+impl Error for GraphError {
+    fn description(&self) -> &str {
+        &self.description
+    }
+}
+
+impl Display for GraphError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.kind {
+            GraphKindError::NodeAlreadyExist => {
+                write!(
+                    f,
+                    "this node already exist\nDescription: {}",
+                    &self.description
+                )
+            }
+        }
+    }
+}
+
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 type Index = u32;
 type Weight = u32;
@@ -158,11 +189,12 @@ where
     }
 
     /// Add in end new [`Edge<T>`]
-    fn push(&mut self, edge: Edge<T>) {
+    fn push(&mut self, edge: Edge<T>) -> Result<()> {
         self.edges.insert(edge);
+        Ok(())
     }
 
-    fn delete(&mut self, edge_index: Index) -> Option<Edge<T>> {
+    fn delete(&mut self, edge_index: Index) -> Result<Option<Edge<T>>> {
         let rm_edge = self
             .edges
             .iter()
@@ -171,9 +203,9 @@ where
 
         if let Some(rm_e) = rm_edge {
             self.edges.remove(&rm_e);
-            Some(rm_e)
+            Ok(Some(rm_e))
         } else {
-            None
+            Ok(None)
         }
     }
 }
@@ -244,15 +276,16 @@ where
         self.is_directed
     }
 
-    pub fn add_node(&mut self, index_node: Index) {
+    pub fn add_node(&mut self, index_node: Index) -> Result<()> {
         if self.adjacency.get(&index_node).is_none() {
             self.adjacency.insert(index_node, Adjacency::default());
         }
+        Ok(())
     }
 
-    pub fn add_edge(&mut self, node: &Node<T>, new_edge: &Edge<T>) {
+    pub fn add_edge(&mut self, node: &Node<T>, new_edge: &Edge<T>) -> Result<()> {
         if let Some(edges) = self.adjacency.get_mut(&node.number) {
-            edges.push(new_edge.clone());
+            edges.push(new_edge.clone())?;
         } else {
             self.adjacency
                 .insert(node.number, Adjacency::new(new_edge.clone()));
@@ -261,45 +294,46 @@ where
         if !self.is_directed {
             let duplicate_edge = Edge::new(&node.number, new_edge.weight, &node.value);
             if let Some(edges) = self.adjacency.get_mut(&new_edge.node.number) {
-                edges.push(duplicate_edge);
+                edges.push(duplicate_edge)?;
             } else {
                 self.adjacency
                     .insert(new_edge.node.number, Adjacency::new(duplicate_edge));
             }
         }
+        Ok(())
     }
 
     pub fn delete_edge(
         &mut self,
         node: &Node<T>,
         edge_index: &Index,
-    ) -> (Option<Edge<T>>, Option<Edge<T>>) {
+    ) -> Result<(Option<Edge<T>>, Option<Edge<T>>)> {
         let first = if let Some(adjacency) = self.adjacency.get_mut(&node.number) {
-            adjacency.delete(*edge_index)
+            adjacency.delete(*edge_index)?
         } else {
             None
         };
 
         if self.is_directed {
-            (first, None)
+            Ok((first, None))
         } else {
             let second = if first.is_some()
                 && let Some(adjacency) = self.adjacency.get_mut(&first.clone().unwrap().node.number)
             {
-                adjacency.delete(node.number)
+                adjacency.delete(node.number)?
             } else {
                 None
             };
-            (first, second)
+            Ok((first, second))
         }
     }
 
-    pub fn delete_node(&mut self, node: &Node<T>) -> Option<Adjacency<T>> {
+    pub fn delete_node(&mut self, node: &Node<T>) -> Result<Option<Adjacency<T>>> {
         // Remove edges from other adjacencies
         for (_, adjacency) in self.adjacency.iter_mut() {
             adjacency.edges.retain(|n| n.node.number != node.number);
         }
-        self.adjacency.remove(&node.number)
+        Ok(self.adjacency.remove(&node.number))
     }
 
     pub fn write_in_file(&self, path: &str) -> Result<()> {
