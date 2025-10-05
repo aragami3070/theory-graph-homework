@@ -94,7 +94,7 @@ pub fn cli_interface() -> Result<()> {
 				std::io::stdin().read_line(&mut input)?;
 				let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
 
-                println!("Введите номер вершины:");
+                println!("Введите номер вершины куда идет ребро:");
 
 				input.clear();
 				std::io::stdin().read_line(&mut input)?;
@@ -104,7 +104,13 @@ pub fn cli_interface() -> Result<()> {
 				println!("{graph}")
             }
             5 => {
-                todo!()
+                println!("Введите путь до файла:");
+
+				input.clear();
+				std::io::stdin().read_line(&mut input)?;
+
+				graph.write_in_file(&input)?;
+				println!("Граф сохранен")
             }
             6 => {
                 todo!()
