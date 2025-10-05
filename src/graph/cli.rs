@@ -12,6 +12,7 @@ pub fn cli_interface() -> Result<()> {
     let is_directed: bool = input.trim().parse()?;
     let mut graph: Graph<u32> =
         Graph::new(None, Adjacency::default(), is_directed);
+
     loop {
         println!("1. Добавить вершину");
         println!("2. Добавить ребро");
@@ -34,6 +35,7 @@ pub fn cli_interface() -> Result<()> {
                 graph.add_node(node_number)?;
                 println!("{graph}")
             }
+
             2 => {
                 println!("Введите номер вершины в которую будет идти ребро:");
 
@@ -56,6 +58,7 @@ pub fn cli_interface() -> Result<()> {
                 let new_edge = Edge::new(&edge_node_number, edge_node_weight, &edge_node_value);
 
                 println!("Введите номер вершины из которой будет выходить ребро:");
+
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
                 let node_number: u32 = input.trim().parse()?;
@@ -72,15 +75,33 @@ pub fn cli_interface() -> Result<()> {
                 }
                 println!("{graph}")
             }
+
             3 => {
                 println!("Введите номер вершины:");
+
 				input.clear();
 				std::io::stdin().read_line(&mut input)?;
 				let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
+
 				graph.delete_node(&node)?;
+				println!("{graph}")
             }
+
             4 => {
-                todo!()
+                println!("Введите номер вершины:");
+
+				input.clear();
+				std::io::stdin().read_line(&mut input)?;
+				let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
+
+                println!("Введите номер вершины:");
+
+				input.clear();
+				std::io::stdin().read_line(&mut input)?;
+				let edge_index: u32 = input.trim().parse()?;
+
+				graph.delete_edge(&node, &edge_index)?;
+				println!("{graph}")
             }
             5 => {
                 todo!()
