@@ -1,4 +1,5 @@
 mod graph;
+mod tasks;
 
 use std::process;
 
