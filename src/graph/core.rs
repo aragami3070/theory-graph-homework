@@ -356,11 +356,11 @@ where
         for (_, adjacency) in self.adjacency.iter_mut() {
             adjacency.edges.retain(|n| n.node.number != node.number);
         }
-		self.nodes.remove(&node.number);
-		if let Some(adjacency) =  self.adjacency.remove(&node.number) {
-		    return Ok(adjacency);
-		}
-		Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")))
+        self.nodes.remove(&node.number);
+        if let Some(adjacency) = self.adjacency.remove(&node.number) {
+            return Ok(adjacency);
+        }
+        Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")))
     }
 
     pub fn write_in_file(&self, path: &str) -> Result<()> {

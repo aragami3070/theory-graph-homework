@@ -115,7 +115,7 @@ pub fn cli_interface() -> Result<()> {
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
 
-                graph.write_in_file(&input.trim_end())?;
+                graph.write_in_file(input.trim_end())?;
                 println!("Граф сохранен")
             }
 
@@ -125,8 +125,8 @@ pub fn cli_interface() -> Result<()> {
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
 
-                graph = graph.new_from_file(&input.trim_end())?;
-				println!("{graph}")
+                graph = graph.new_from_file(input.trim_end())?;
+                println!("{graph}")
             }
 
             _ => {
