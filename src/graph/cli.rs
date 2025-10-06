@@ -71,7 +71,7 @@ pub fn cli_interface() -> Result<()> {
                 if graph.get_is_directed() {
                     graph.add_edge(&Node::new(node_number, 0), &new_edge)?;
                 } else {
-                    println!("Введите ее значение:");
+                    println!("Введите значение вершины из которой будет выходить ребро:");
                     input.clear();
                     std::io::stdin().read_line(&mut input)?;
                     let node_value: u32 = input.trim().parse()?;
@@ -115,7 +115,7 @@ pub fn cli_interface() -> Result<()> {
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
 
-                graph.write_in_file(&input)?;
+                graph.write_in_file(&input.trim_end())?;
                 println!("Граф сохранен")
             }
 
@@ -125,7 +125,7 @@ pub fn cli_interface() -> Result<()> {
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
 
-                graph = graph.new_from_file(&input)?;
+                graph = graph.new_from_file(&input.trim_end())?;
 				println!("{graph}")
             }
 
