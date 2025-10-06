@@ -31,11 +31,23 @@ pub fn cli_interface() -> Result<()> {
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
                 let node_number: u32 = input.trim().parse()?;
-                graph.add_node(node_number)?;
+
+                println!("Введите ее значение:");
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+                let node_value: u32 = input.trim().parse()?;
+
+                graph.add_node(Node::new(node_number, node_value))?;
                 println!("{graph}")
             }
 
             2 => {
+                println!("Введите номер вершины из которой будет выходить ребро:");
+
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+                let node_number: u32 = input.trim().parse()?;
+
                 println!("Введите номер вершины в которую будет идти ребро:");
 
                 input.clear();
@@ -55,12 +67,6 @@ pub fn cli_interface() -> Result<()> {
                 let edge_node_weight: u32 = input.trim().parse()?;
 
                 let new_edge = Edge::new(&edge_node_number, edge_node_weight, &edge_node_value);
-
-                println!("Введите номер вершины из которой будет выходить ребро:");
-
-                input.clear();
-                std::io::stdin().read_line(&mut input)?;
-                let node_number: u32 = input.trim().parse()?;
 
                 if graph.get_is_directed() {
                     graph.add_edge(&Node::new(node_number, 0), &new_edge)?;

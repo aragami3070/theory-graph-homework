@@ -235,6 +235,7 @@ pub struct Graph<T>
 where
     T: Clone,
 {
+    nodes: HashMap<Index, Node<T>>,
     adjacency: HashMap<Index, Adjacency<T>>,
     is_directed: bool,
 }
@@ -258,6 +259,7 @@ where
 {
     fn default() -> Self {
         Self {
+            nodes: HashMap::new(),
             adjacency: HashMap::new(),
             is_directed: false,
         }
@@ -271,6 +273,7 @@ where
     /// Creates a new [`AdjacencyList<T>`]
     pub fn new(node: Option<Node<T>>, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
         let mut new_edges: HashMap<Index, Adjacency<T>> = HashMap::new();
+        let mut new_nodes: HashMap<Index, Node<T>> = HashMap::new();
 
         if let Some(n) = node {
             if !is_directed {
@@ -282,9 +285,11 @@ where
                 }
             }
             new_edges.insert(n.number, edge_adjacency);
+            new_nodes.insert(n.number, n);
         }
 
         Self {
+            nodes: new_nodes,
             adjacency: new_edges,
             is_directed,
         }
@@ -294,9 +299,10 @@ where
         self.is_directed
     }
 
-    pub fn add_node(&mut self, index_node: Index) -> Result<()> {
-        if self.adjacency.contains_key(&index_node) {
-            self.adjacency.insert(index_node, Adjacency::default());
+    pub fn add_node(&mut self, node: Node<T>) -> Result<()> {
+        if !self.adjacency.contains_key(&node.number) {
+            self.adjacency.insert(node.number, Adjacency::default());
+            self.nodes.insert(node.number, node);
             Ok(())
         } else {
             Err(Box::new(GraphError::new(
@@ -310,8 +316,7 @@ where
         if let Some(edges) = self.adjacency.get_mut(&node.number) {
             edges.push(new_edge.clone())?;
         } else {
-            self.adjacency
-                .insert(node.number, Adjacency::new(new_edge.clone()));
+            return Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")));
         }
 
         if !self.is_directed {
@@ -319,8 +324,7 @@ where
             if let Some(edges) = self.adjacency.get_mut(&new_edge.node.number) {
                 edges.push(duplicate_edge)?;
             } else {
-                self.adjacency
-                    .insert(new_edge.node.number, Adjacency::new(duplicate_edge));
+                return Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")));
             }
         }
         Ok(())
@@ -347,12 +351,16 @@ where
         }
     }
 
-    pub fn delete_node(&mut self, node: &Node<T>) -> Result<Option<Adjacency<T>>> {
+    pub fn delete_node(&mut self, node: &Node<T>) -> Result<Adjacency<T>> {
         // Remove edges from other adjacencies
         for (_, adjacency) in self.adjacency.iter_mut() {
             adjacency.edges.retain(|n| n.node.number != node.number);
         }
-        Ok(self.adjacency.remove(&node.number))
+		self.nodes.remove(&node.number);
+		if let Some(adjacency) =  self.adjacency.remove(&node.number) {
+		    return Ok(adjacency);
+		}
+		Err(Box::new(GraphError::new(GraphKindError::NodeNotFound, "")))
     }
 
     pub fn write_in_file(&self, path: &str) -> Result<()> {
