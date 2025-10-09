@@ -1,5 +1,5 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{HashMap, HashSet, hash_map},
     error::Error,
     fmt::{Debug, Display},
     fs::File,
@@ -378,5 +378,35 @@ where
 
         let readed: Graph<T> = serde_json::from_reader(reader)?;
         Ok(readed)
+    }
+}
+
+pub struct GraphIter<'a, T>
+where
+    T: Clone,
+{
+    inner: hash_map::Iter<'a, Index, Adjacency<T>>,
+}
+
+impl<'a, T> Iterator for GraphIter<'a, T>
+where
+    T: Clone,
+{
+    type Item = (&'a Index, &'a Adjacency<T>);
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
+}
+
+impl<'a, T> IntoIterator for &'a Graph<T>
+where
+    T: Clone,
+{
+    type Item = (&'a Index, &'a Adjacency<T>);
+    type IntoIter = GraphIter<'a, T>;
+    fn into_iter(self) -> Self::IntoIter {
+        GraphIter {
+            inner: self.adjacency.iter(),
+        }
     }
 }
