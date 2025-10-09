@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use crate::graph::core::{Adjacency, Edge, Graph, Node};
+use crate::{graph::core::{Adjacency, Edge, Graph, Node}, tasks::task_1::task_1_4};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -19,7 +19,8 @@ pub fn cli_interface() -> Result<()> {
         println!("4. Удалить ребро");
         println!("5. Сохранить в файл");
         println!("6. Создать из файла");
-        println!("7 и больше. Выйти");
+        println!("7. Вывести полустепень захода данной вершины орграфа.");
+        println!("8 и больше. Выйти");
 
         input.clear();
         std::io::stdin().read_line(&mut input)?;
@@ -128,6 +129,19 @@ pub fn cli_interface() -> Result<()> {
                 graph = graph.new_from_file(input.trim_end())?;
                 println!("{graph}")
             }
+
+			7 => {
+				if !graph.get_is_directed() {
+					panic!("Граф неориентированный")
+				}
+
+				println!("Введите номер вершины:");
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+				let node_number: u32 = input.trim().parse()?;
+
+				println!("Полустепень захода вершины {node_number} = {}", task_1_4(&graph, &node_number))
+			}
 
             _ => {
                 break;
