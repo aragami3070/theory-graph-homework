@@ -206,6 +206,10 @@ where
         Self { edges: new_edges }
     }
 
+	pub fn len(&self) -> usize {
+		self.edges.len()
+	}
+
     /// Add in end new [`Edge<T>`]
     fn push(&mut self, edge: Edge<T>) -> Result<()> {
         self.edges.insert(edge);
