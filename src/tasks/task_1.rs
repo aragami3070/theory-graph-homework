@@ -9,9 +9,9 @@ pub fn task_1_4<T: Clone>(graph: &Graph<T>, node_index: &u32) -> u32 {
         for edg in adjacency {
             if edg.node.number == *node_index {
                 half_step += 1;
-				break;
+                break;
             }
         }
     }
-	half_step
+    half_step
 }

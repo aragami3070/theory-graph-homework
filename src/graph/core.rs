@@ -206,9 +206,9 @@ where
         Self { edges: new_edges }
     }
 
-	pub fn len(&self) -> usize {
-		self.edges.len()
-	}
+    pub fn len(&self) -> usize {
+        self.edges.len()
+    }
 
     /// Add in end new [`Edge<T>`]
     fn push(&mut self, edge: Edge<T>) -> Result<()> {
@@ -250,15 +250,18 @@ where
     }
 }
 
-impl<'a, T> IntoIterator for &'a Adjacency<T> where T: Clone {
+impl<'a, T> IntoIterator for &'a Adjacency<T>
+where
+    T: Clone,
+{
     type Item = &'a Edge<T>;
-	type IntoIter = AdjacencyIter<'a, T>;
+    type IntoIter = AdjacencyIter<'a, T>;
 
-	fn into_iter(self) -> Self::IntoIter {
-	    AdjacencyIter {
-			inner: self.edges.iter()
-		}
-	}
+    fn into_iter(self) -> Self::IntoIter {
+        AdjacencyIter {
+            inner: self.edges.iter(),
+        }
+    }
 }
 
 // Graph part
