@@ -1,5 +1,5 @@
 use std::{
-    collections::{HashMap, HashSet, hash_map},
+    collections::{HashMap, HashSet, hash_map, hash_set},
     error::Error,
     fmt::{Debug, Display},
     fs::File,
@@ -228,6 +228,35 @@ where
     }
 }
 
+pub struct AdjacencyIter<'a, T>
+where
+    T: Clone,
+{
+    inner: hash_set::Iter<'a, Edge<T>>,
+}
+
+impl<'a, T> Iterator for AdjacencyIter<'a, T>
+where
+    T: Clone,
+{
+    type Item = &'a Edge<T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
+}
+
+impl<'a, T> IntoIterator for &'a Adjacency<T> where T: Clone {
+    type Item = &'a Edge<T>;
+	type IntoIter = AdjacencyIter<'a, T>;
+
+	fn into_iter(self) -> Self::IntoIter {
+	    AdjacencyIter {
+			inner: self.edges.iter()
+		}
+	}
+}
+
 // Graph part
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -270,7 +299,7 @@ impl<T> Graph<T>
 where
     T: Clone + Serialize + DeserializeOwned + Debug,
 {
-    /// Creates a new [`AdjacencyList<T>`]
+    /// Creates a new [`Graph<T>`]
     pub fn new(node: Option<Node<T>>, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
         let mut new_edges: HashMap<Index, Adjacency<T>> = HashMap::new();
         let mut new_nodes: HashMap<Index, Node<T>> = HashMap::new();
