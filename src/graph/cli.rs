@@ -1,6 +1,9 @@
 use std::error::Error;
 
-use crate::{graph::core::{Adjacency, Edge, Graph, Node}, tasks::task_1::task_1_4};
+use crate::{
+    graph::core::{Adjacency, Edge, Graph, Node},
+    tasks::{task_1::task_1_4, task_2::task_2_5},
+};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -13,14 +16,15 @@ pub fn cli_interface() -> Result<()> {
     let mut graph: Graph<u32> = Graph::new(None, Adjacency::default(), is_directed);
 
     loop {
-        println!("1. Добавить вершину");
-        println!("2. Добавить ребро");
-        println!("3. Удалить вершину");
-        println!("4. Удалить ребро");
-        println!("5. Сохранить в файл");
-        println!("6. Создать из файла");
+        println!("1. Добавить вершину.");
+        println!("2. Добавить ребро.");
+        println!("3. Удалить вершину.");
+        println!("4. Удалить ребро.");
+        println!("5. Сохранить в файл.");
+        println!("6. Создать из файла.");
         println!("7. Вывести полустепень захода данной вершины орграфа.");
-        println!("8 и больше. Выйти");
+        println!("8. Для каждой вершины орграфа вывести её степень.");
+        println!("9 и больше. Выйти");
 
         input.clear();
         std::io::stdin().read_line(&mut input)?;
@@ -130,19 +134,33 @@ pub fn cli_interface() -> Result<()> {
                 println!("{graph}")
             }
 
-			7 => {
-				if !graph.get_is_directed() {
-					panic!("Граф неориентированный")
-				}
+            7 => {
+                if !graph.get_is_directed() {
+                    panic!("Граф неориентированный")
+                }
 
-				println!("Введите номер вершины:");
+                println!("Введите номер вершины:");
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
-				let node_number: u32 = input.trim().parse()?;
+                let node_number: u32 = input.trim().parse()?;
 
-				println!("Полустепень захода вершины {node_number} = {}", task_1_4(&graph, &node_number))
-			}
+                println!(
+                    "Полустепень захода вершины {node_number} = {}",
+                    task_1_4(&graph, &node_number)
+                )
+            }
 
+            8 => {
+                if !graph.get_is_directed() {
+                    panic!("Граф неориентированный")
+                }
+
+                let result = task_2_5(&graph);
+
+                for (index, count) in result {
+                    println!("Степень вершины {index} = {count}")
+                }
+            }
             _ => {
                 break;
             }
