@@ -16,6 +16,8 @@ pub fn cli_interface() -> Result<()> {
     let mut graph: Graph<u32> = Graph::new(None, Adjacency::default(), is_directed);
 
     loop {
+		println!("===========================================================");
+        println!("0. Вывести граф.");
         println!("1. Добавить вершину.");
         println!("2. Добавить ребро.");
         println!("3. Удалить вершину.");
@@ -25,12 +27,24 @@ pub fn cli_interface() -> Result<()> {
         println!("7. Вывести полустепень захода данной вершины орграфа.");
         println!("8. Для каждой вершины орграфа вывести её степень.");
         println!("9 и больше. Выйти");
+		println!("===========================================================");
 
         input.clear();
         std::io::stdin().read_line(&mut input)?;
 
         let choice: u8 = input.trim().parse()?;
         match choice {
+            0 => {
+                println!(
+                    "Граф: {}",
+                    if graph.get_is_directed() {
+                        "ориентированный"
+                    } else {
+                        "неориентированный"
+                    }
+                );
+				println!("{graph}")
+            }
             1 => {
                 println!("Введите номер вершины:");
                 input.clear();
@@ -145,7 +159,7 @@ pub fn cli_interface() -> Result<()> {
                 let node_number: u32 = input.trim().parse()?;
 
                 println!(
-                    "Полустепень захода вершины {node_number} = {}",
+                    "Полустепень захода вершины {{{node_number}}} = {}",
                     task_1_4(&graph, &node_number)
                 )
             }
@@ -155,10 +169,8 @@ pub fn cli_interface() -> Result<()> {
                     panic!("Граф неориентированный")
                 }
 
-                let result = task_2_5(&graph);
-
-                for (index, count) in result {
-                    println!("Степень вершины {index} = {count}")
+                for (index, count) in task_2_5(&graph) {
+                    println!("Степень вершины {{{index}}} = {count}")
                 }
             }
             _ => {
