@@ -7,16 +7,23 @@ use std::{
     io::{BufReader, BufWriter, Write},
 };
 
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
+type Index = u32;
+type Weight = u32;
+type Result<T> = std::result::Result<T, Box<dyn Error>>;
+type PairEdges<T> = (Option<Edge<T>>, Option<Edge<T>>);
+
 #[derive(Debug)]
-struct GraphError {
+pub struct GraphError {
     kind: GraphKindError,
     description: String,
 }
 
 #[derive(Debug)]
-enum GraphKindError {
+pub enum GraphKindError {
     NodeAlreadyExist,
     NodeNotFound,
+    GraphMustBeDirected,
 }
 
 impl GraphError {
@@ -40,26 +47,29 @@ impl Display for GraphError {
             GraphKindError::NodeAlreadyExist => {
                 write!(
                     f,
-                    "this node already exist in graph\nDescription: {}",
+                    "this node already exist in graph.\nDescription: {}",
                     &self.description
                 )
             }
+
             GraphKindError::NodeNotFound => {
                 write!(
                     f,
-                    "this node not found in graph\nDescription: {}",
+                    "this node not found in graph.\nDescription: {}",
+                    &self.description
+                )
+            }
+
+            GraphKindError::GraphMustBeDirected => {
+                write!(
+                    f,
+                    "this graph must be directed.\nDescription: {}",
                     &self.description
                 )
             }
         }
     }
 }
-
-use serde::{Deserialize, Serialize, de::DeserializeOwned};
-type Index = u32;
-type Weight = u32;
-type Result<T> = std::result::Result<T, Box<dyn Error>>;
-type PairEdges<T> = (Option<Edge<T>>, Option<Edge<T>>);
 
 // Node part
 
