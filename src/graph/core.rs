@@ -433,6 +433,18 @@ where
     pub fn get_node(&self, index_node: &Index) -> Option<&Node<T>> {
         self.nodes.get(index_node)
     }
+
+    pub fn iter(&self) -> GraphIter<T> {
+        GraphIter {
+            inner: self.adjacency.iter(),
+        }
+    }
+
+    pub fn iter_mut(&mut self) -> GraphIterMut<T> {
+        GraphIterMut {
+            inner: self.adjacency.iter_mut(),
+        }
+    }
 }
 
 pub struct GraphIter<'a, T>
@@ -452,6 +464,23 @@ where
     }
 }
 
+pub struct GraphIterMut<'a, T>
+where
+    T: Clone,
+{
+    inner: hash_map::IterMut<'a, Index, Adjacency<T>>,
+}
+
+impl<'a, T> Iterator for GraphIterMut<'a, T>
+where
+    T: Clone,
+{
+    type Item = (&'a Index, &'a mut Adjacency<T>);
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next()
+    }
+}
+
 impl<'a, T> IntoIterator for &'a Graph<T>
 where
     T: Clone,
@@ -461,6 +490,19 @@ where
     fn into_iter(self) -> Self::IntoIter {
         GraphIter {
             inner: self.adjacency.iter(),
+        }
+    }
+}
+
+impl<'a, T> IntoIterator for &'a mut Graph<T>
+where
+    T: Clone,
+{
+    type Item = (&'a Index, &'a mut Adjacency<T>);
+    type IntoIter = GraphIterMut<'a, T>;
+    fn into_iter(self) -> Self::IntoIter {
+        GraphIterMut {
+            inner: self.adjacency.iter_mut(),
         }
     }
 }
