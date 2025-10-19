@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use crate::{
-    graph::core::{Adjacency, Edge, Graph, Node},
+    graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, Node},
     tasks::{task_1::task_1_4, task_2::task_2_5},
 };
 
@@ -16,7 +16,7 @@ pub fn cli_interface() -> Result<()> {
     let mut graph: Graph<u32> = Graph::new(None, Adjacency::default(), is_directed);
 
     loop {
-		println!("===========================================================");
+        println!("===========================================================");
         println!("0. Вывести граф.");
         println!("1. Добавить вершину.");
         println!("2. Добавить ребро.");
@@ -27,7 +27,7 @@ pub fn cli_interface() -> Result<()> {
         println!("7. Вывести полустепень захода данной вершины орграфа.");
         println!("8. Для каждой вершины орграфа вывести её степень.");
         println!("9 и больше. Выйти");
-		println!("===========================================================");
+        println!("===========================================================");
 
         input.clear();
         std::io::stdin().read_line(&mut input)?;
@@ -43,7 +43,7 @@ pub fn cli_interface() -> Result<()> {
                         "неориентированный"
                     }
                 );
-				println!("{graph}")
+                println!("{graph}")
             }
             1 => {
                 println!("Введите номер вершины:");
@@ -150,7 +150,10 @@ pub fn cli_interface() -> Result<()> {
 
             7 => {
                 if !graph.get_is_directed() {
-                    panic!("Граф неориентированный")
+                    return Err(Box::new(GraphError::new(
+                        GraphKindError::GraphMustBeDirected,
+                        "по условию должен быть орграф",
+                    )));
                 }
 
                 println!("Введите номер вершины:");
@@ -166,7 +169,10 @@ pub fn cli_interface() -> Result<()> {
 
             8 => {
                 if !graph.get_is_directed() {
-                    panic!("Граф неориентированный")
+                    return Err(Box::new(GraphError::new(
+                        GraphKindError::GraphMustBeDirected,
+                        "по условию должен быть орграф",
+                    )));
                 }
 
                 for (index, count) in task_2_5(&graph) {
