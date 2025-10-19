@@ -429,6 +429,10 @@ where
     pub fn to_directed(&mut self) {
         self.is_directed = true
     }
+
+    pub fn get_node(&self, index_node: &Index) -> Option<&Node<T>> {
+        self.nodes.get(index_node)
+    }
 }
 
 pub struct GraphIter<'a, T>
