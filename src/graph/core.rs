@@ -418,12 +418,16 @@ where
         Ok(())
     }
 
-    pub fn new_from_file(&self, path: &str) -> Result<Graph<T>> {
+    pub fn new_from_file(path: &str) -> Result<Graph<T>> {
         let file = File::open(path)?;
         let reader = BufReader::new(file);
 
         let readed: Graph<T> = serde_json::from_reader(reader)?;
         Ok(readed)
+    }
+
+    pub fn to_directed(&mut self) {
+        self.is_directed = true
     }
 }
 
