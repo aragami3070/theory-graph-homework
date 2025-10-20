@@ -216,6 +216,10 @@ where
         Self { edges: new_edges }
     }
 
+	pub fn contains(&self, edge: &Edge<T>) -> bool {
+		self.edges.contains(edge)
+	}
+
     pub fn len(&self) -> usize {
         self.edges.len()
     }
