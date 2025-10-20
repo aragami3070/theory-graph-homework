@@ -1,4 +1,4 @@
-use std::{error::Error, io::{self, Write}};
+use std::error::Error;
 
 use crate::{
     graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, Node},
@@ -28,7 +28,11 @@ pub fn cli_interface() -> Result<()> {
         println!("7. Вывести полустепень захода данной вершины орграфа.");
         println!("8. Для каждой вершины орграфа вывести её степень.");
         println!("9. Построить граф, являющийся пересечением двух заданных.");
-        println!("10 и больше. Выйти");
+        println!(
+            "10. Проверить, является ли граф деревом, или лесом, или не \
+			является ни тем, ни другим."
+        );
+        println!("11 и больше. Выйти");
         println!("===========================================================");
 
         input.clear();
@@ -191,6 +195,10 @@ pub fn cli_interface() -> Result<()> {
                 let mut other_graph: Graph<u32> = Graph::new_from_file(input.trim_end())?;
 
                 println!("{}", task_4_6(&mut graph, &mut other_graph)?)
+            }
+
+            10 => {
+
             }
             _ => {
                 break;
