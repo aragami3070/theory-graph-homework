@@ -1,8 +1,8 @@
-use std::error::Error;
+use std::{error::Error, io::{self, Write}};
 
 use crate::{
     graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, Node},
-    tasks::{task_1::task_1_4, task_2::task_2_5, task_3::task_3_6},
+    tasks::{task_2::task_2_4, task_3::task_3_5, task_4::task_4_6},
 };
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -165,7 +165,7 @@ pub fn cli_interface() -> Result<()> {
 
                 println!(
                     "Полустепень захода вершины {{{node_number}}} = {}",
-                    task_1_4(&graph, &node_number)
+                    task_2_4(&graph, &node_number)
                 )
             }
 
@@ -177,7 +177,7 @@ pub fn cli_interface() -> Result<()> {
                     )));
                 }
 
-                for (index, count) in task_2_5(&graph) {
+                for (index, count) in task_3_5(&graph) {
                     println!("Степень вершины {{{index}}} = {count}")
                 }
             }
@@ -190,7 +190,7 @@ pub fn cli_interface() -> Result<()> {
 
                 let mut other_graph: Graph<u32> = Graph::new_from_file(input.trim_end())?;
 
-                println!("{}", task_3_6(&mut graph, &mut other_graph)?)
+                println!("{}", task_4_6(&mut graph, &mut other_graph)?)
             }
             _ => {
                 break;
