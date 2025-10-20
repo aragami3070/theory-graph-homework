@@ -345,6 +345,10 @@ where
         }
     }
 
+	pub fn len(&self) -> usize {
+		self.nodes.len()
+	}
+
     pub fn get_is_directed(&self) -> bool {
         self.is_directed
     }
@@ -453,6 +457,12 @@ where
             inner: self.adjacency.iter_mut(),
         }
     }
+}
+
+pub enum GraphType {
+	Default,
+	Tree,
+	Forest
 }
 
 pub struct GraphIter<'a, T>
