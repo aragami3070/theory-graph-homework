@@ -438,6 +438,10 @@ where
         self.nodes.get(index_node)
     }
 
+    pub fn get_adjacency(&self, index_node: &Index) -> Option<&Adjacency<T>> {
+        self.adjacency.get(index_node)
+    }
+
     pub fn iter(&self) -> GraphIter<T> {
         GraphIter {
             inner: self.adjacency.iter(),
