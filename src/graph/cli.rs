@@ -2,7 +2,7 @@ use std::error::Error;
 
 use crate::{
     graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, Node},
-    tasks::{task_1::task_1_4, task_2::task_2_5},
+    tasks::{task_1::task_1_4, task_2::task_2_5, task_3::task_3_6},
 };
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -13,6 +13,7 @@ pub fn cli_interface() -> Result<()> {
     let mut input = String::new();
     std::io::stdin().read_line(&mut input)?;
     let is_directed: bool = input.trim().parse()?;
+
     let mut graph: Graph<u32> = Graph::new(None, Adjacency::default(), is_directed);
 
     loop {
@@ -26,7 +27,8 @@ pub fn cli_interface() -> Result<()> {
         println!("6. Создать из файла.");
         println!("7. Вывести полустепень захода данной вершины орграфа.");
         println!("8. Для каждой вершины орграфа вывести её степень.");
-        println!("9 и больше. Выйти");
+        println!("9. Построить граф, являющийся пересечением двух заданных.");
+        println!("10 и больше. Выйти");
         println!("===========================================================");
 
         input.clear();
@@ -144,7 +146,7 @@ pub fn cli_interface() -> Result<()> {
                 input.clear();
                 std::io::stdin().read_line(&mut input)?;
 
-                graph = graph.new_from_file(input.trim_end())?;
+                graph = Graph::new_from_file(input.trim_end())?;
                 println!("{graph}")
             }
 
@@ -178,6 +180,17 @@ pub fn cli_interface() -> Result<()> {
                 for (index, count) in task_2_5(&graph) {
                     println!("Степень вершины {{{index}}} = {count}")
                 }
+            }
+
+            9 => {
+                println!("Введите путь до файла (для второго графа):");
+
+                input.clear();
+                std::io::stdin().read_line(&mut input)?;
+
+                let mut other_graph: Graph<u32> = Graph::new_from_file(input.trim_end())?;
+
+                println!("{}", task_3_6(&mut graph, &mut other_graph)?)
             }
             _ => {
                 break;
