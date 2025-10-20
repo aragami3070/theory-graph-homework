@@ -1,7 +1,20 @@
-use crate::graph::core::Graph;
+use std::{error::Error, fmt::Debug};
+
+use serde::{Serialize, de::DeserializeOwned};
+
+use crate::graph::core::{Graph, GraphError, GraphKindError};
 
 /// Получить полустепень захода данной вершины орграфа
-pub fn task_2_4<T: Clone>(graph: &Graph<T>, node_index: &u32) -> u32 {
+pub fn task_2_4<T: Clone + DeserializeOwned + Debug + Serialize>(
+    graph: &Graph<T>,
+    node_index: &u32,
+) -> Result<u32, Box<dyn Error>> {
+    if !graph.get_is_directed() {
+        return Err(Box::new(GraphError::new(
+            GraphKindError::GraphMustBeDirected,
+            "по условию должен быть орграф",
+        )));
+    }
     // Полустепень вершины
     let mut half_step: u32 = 0;
     // Проходимся по всем вершинам и считаем сколько раз встречается
@@ -14,5 +27,5 @@ pub fn task_2_4<T: Clone>(graph: &Graph<T>, node_index: &u32) -> u32 {
             }
         }
     }
-    half_step
+    Ok(half_step)
 }

@@ -169,19 +169,12 @@ pub fn cli_interface() -> Result<()> {
 
                 println!(
                     "Полустепень захода вершины {{{node_number}}} = {}",
-                    task_2_4(&graph, &node_number)
+                    task_2_4(&graph, &node_number)?
                 )
             }
 
             8 => {
-                if !graph.get_is_directed() {
-                    return Err(Box::new(GraphError::new(
-                        GraphKindError::GraphMustBeDirected,
-                        "по условию должен быть орграф",
-                    )));
-                }
-
-                for (index, count) in task_3_5(&graph) {
+                for (index, count) in task_3_5(&graph)? {
                     println!("Степень вершины {{{index}}} = {count}")
                 }
             }
