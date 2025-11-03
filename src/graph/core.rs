@@ -216,9 +216,9 @@ where
         Self { edges: new_edges }
     }
 
-	pub fn contains(&self, edge: &Edge<T>) -> bool {
-		self.edges.contains(edge)
-	}
+    pub fn contains(&self, edge: &Edge<T>) -> bool {
+        self.edges.contains(edge)
+    }
 
     pub fn len(&self) -> usize {
         self.edges.len()
@@ -345,10 +345,17 @@ where
         }
     }
 
-	pub fn len(&self) -> usize {
-		self.nodes.len()
-	}
+    /// Returns the some node index of this [`Graph<T>`].
+    pub fn get_some_node_index(&self) -> Option<&Index> {
+        self.nodes.keys().next()
+    }
 
+    /// Returns the length of this [`Graph<T>`].
+    pub fn len(&self) -> usize {
+        self.nodes.len()
+    }
+
+    /// Returns the is directed field of this [`Graph<T>`].
     pub fn get_is_directed(&self) -> bool {
         self.is_directed
     }
@@ -446,12 +453,14 @@ where
         self.adjacency.get(index_node)
     }
 
+    /// Returns the iter of this [`Graph<T>`].
     pub fn iter(&self) -> GraphIter<T> {
         GraphIter {
             inner: self.adjacency.iter(),
         }
     }
 
+    /// Returns the mut iter of this [`Graph<T>`].
     pub fn iter_mut(&mut self) -> GraphIterMut<T> {
         GraphIterMut {
             inner: self.adjacency.iter_mut(),
@@ -460,9 +469,9 @@ where
 }
 
 pub enum GraphType {
-	Default,
-	Tree,
-	Forest
+    Default,
+    Tree,
+    Forest,
 }
 
 pub struct GraphIter<'a, T>
