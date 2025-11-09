@@ -34,6 +34,34 @@ fn dfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
 }
 
+fn is_a_forest<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
+    graph: &Graph<T>,
+) -> Result<bool> {
+    let mut visited: HashSet<u32> = HashSet::new();
+    let mut subgraphs: Vec<Graph<T>> = Vec::new();
+
+    // Разбиваем граф на подграфы по связности
+    for (ind, _) in graph {
+        if !visited.contains(ind) {
+            let mut compnents = Vec::new();
+            dfs(graph, ind, &mut visited, &mut compnents);
+            subgraphs.push(graph.create_subgraph(compnents, true)?);
+        }
+    }
+
+    // Проверяем, что все из них деревья
+    let mut is_forest = true;
+    for subgraph in subgraphs {
+        println!("{subgraph:?}");
+        is_forest = is_a_tree(&subgraph)?;
+        println!("{is_forest}");
+        if !is_forest {
+            break;
+        }
+    }
+
+    Ok(is_forest)
+}
 
 // Проверяет есть ли цикл в графе из вершины start
 fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
@@ -108,6 +136,9 @@ pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         return Ok(GraphType::Tree);
     }
 
+    if is_a_forest(graph)? {
+        return Ok(GraphType::Forest);
+    }
 
     Ok(GraphType::Default)
 }
