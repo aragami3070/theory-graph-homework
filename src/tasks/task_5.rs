@@ -10,8 +10,33 @@ use crate::graph::core::{ColorNode, Graph, GraphError, GraphKindError, GraphType
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+fn dfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
+    graph: &Graph<T>,
+    start: &u32,
+    visited: &mut HashSet<u32>,
+    components: &mut Vec<u32>,
+) {
+    if !visited.contains(start) {
+        // Добавялем вершину в список компонентов связности
+        components.push(*start);
+    }
 
-fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize>(
+    // Отмечаем вершину как посещенную
+    visited.insert(*start);
+
+    // Получаем ребра данной вершины
+    if let Some(adjacency) = graph.get_adjacency(start) {
+        for neighbor in adjacency {
+            if visited.get(&neighbor.node.number).is_none() {
+                dfs(graph, &neighbor.node.number, visited, components);
+            }
+        }
+    }
+}
+
+
+// Проверяет есть ли цикл в графе из вершины start
+fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     start: &u32,
     visited: &mut HashMap<u32, ColorNode>,
@@ -54,7 +79,9 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize>(
 }
 
 // Проверка является ли граф деревом
-fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize>(graph: &Graph<T>) -> Result<bool> {
+fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
+    graph: &Graph<T>,
+) -> Result<bool> {
     let mut count = graph.len();
     let mut cycle = false;
     for (index, adjacency) in graph {
@@ -65,4 +92,22 @@ fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize>(graph: &Graph<T>) 
         }
     }
     Ok(count == 1 && !cycle)
+}
+
+pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
+    graph: &Graph<T>,
+) -> Result<GraphType> {
+    if !graph.get_is_directed() {
+        return Err(Box::new(GraphError::new(
+            GraphKindError::GraphMustBeDirected,
+            "по условию должен быть орграф",
+        )));
+    }
+
+    if is_a_tree(graph)? {
+        return Ok(GraphType::Tree);
+    }
+
+
+    Ok(GraphType::Default)
 }
