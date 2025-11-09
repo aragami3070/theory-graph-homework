@@ -1,8 +1,8 @@
 use std::error::Error;
 
 use crate::{
-    graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, Node},
-    tasks::{task_2::task_2_4, task_3::task_3_5, task_4::task_4_6},
+    graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, Node, GraphType},
+    tasks::{task_2::task_2_4, task_3::task_3_5, task_4::task_4_6, task_5::task_5_18},
 };
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -191,8 +191,12 @@ pub fn cli_interface() -> Result<()> {
             }
 
             10 => {
-
-            }
+				println!("Данный граф {}", match task_5_18(&graph)? {
+					GraphType::Tree => "--- дерево",
+					GraphType::Forest => "--- лес",
+					_ => "обычный"
+				})
+			}
             _ => {
                 break;
             }
