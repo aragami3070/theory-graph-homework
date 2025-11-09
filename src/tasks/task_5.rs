@@ -53,3 +53,16 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize>(
     Ok(false)
 }
 
+// Проверка является ли граф деревом
+fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize>(graph: &Graph<T>) -> Result<bool> {
+    let mut count = graph.len();
+    let mut cycle = false;
+    for (index, adjacency) in graph {
+        count -= adjacency.len();
+        if !cycle {
+            let mut visited = graph.get_nodes_with_color();
+            cycle = graph_have_cycle(graph, index, &mut visited)?;
+        }
+    }
+    Ok(count == 1 && !cycle)
+}
