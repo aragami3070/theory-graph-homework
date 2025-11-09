@@ -9,7 +9,6 @@ use std::{
 
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 
-use crate::graph;
 type Index = u32;
 type Weight = u32;
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -320,7 +319,7 @@ where
 
 impl<T> Graph<T>
 where
-    T: Clone + Serialize + DeserializeOwned + Debug,
+    T: Clone + Serialize + DeserializeOwned + Debug + Default,
 {
     /// Creates a new [`Graph<T>`]
     pub fn new(node: Option<Node<T>>, edge_adjacency: Adjacency<T>, is_directed: bool) -> Self {
@@ -480,13 +479,17 @@ where
             }
         }
 
-		for (ind, adj) in self.iter() {
-			if let Some(adjacency) = subgraph.adjacency.get_mut(ind) {
-				*adjacency = adj.clone();
-			}
-		}
+        for (ind, adj) in self.iter() {
+            if subgraph.get_node(ind).is_some() {
+                for edge in adj {
+                    let mut def_node = Node::default();
+                    def_node.number = *ind;
+                    subgraph.add_edge(&def_node, &edge)?;
+                }
+            }
+        }
 
-		Ok(subgraph)
+        Ok(subgraph)
     }
 
     /// Returns the iter of this [`Graph<T>`].
