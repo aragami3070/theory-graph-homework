@@ -5,7 +5,7 @@ use serde::{Serialize, de::DeserializeOwned};
 use crate::graph::core::{Graph, GraphError, GraphKindError};
 
 /// Получить полустепень захода данной вершины орграфа
-pub fn task_2_4<T: Clone + DeserializeOwned + Debug + Serialize>(
+pub fn task_2_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     node_index: &u32,
 ) -> Result<u32, Box<dyn Error>> {

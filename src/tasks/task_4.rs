@@ -4,7 +4,7 @@ use serde::{Serialize, de::DeserializeOwned};
 
 use crate::graph::core::{Adjacency, Graph};
 
-pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize>(
+pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph_1: &mut Graph<T>,
     graph_2: &mut Graph<T>,
 ) -> Result<Graph<T>, Box<dyn Error>> {
