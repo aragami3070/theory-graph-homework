@@ -350,6 +350,14 @@ where
         self.nodes.keys().next()
     }
 
+    /// Returns nodes with white color of this [`Graph<T>`].
+    pub fn get_nodes_with_color(&self) -> HashMap<Index, ColorNode> {
+        self.nodes
+            .iter()
+            .map(|(&index, _)| (index, ColorNode::White))
+            .collect::<HashMap<Index, ColorNode>>()
+    }
+
     /// Returns the length of this [`Graph<T>`].
     pub fn len(&self) -> usize {
         self.nodes.len()
@@ -479,6 +487,13 @@ pub enum GraphType {
     Default,
     Tree,
     Forest,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum ColorNode {
+    White,
+    Gray,
+    Black,
 }
 
 pub struct GraphIter<'a, T>
