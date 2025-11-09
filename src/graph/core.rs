@@ -8,6 +8,8 @@ use std::{
 };
 
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
+
+use crate::graph;
 type Index = u32;
 type Weight = u32;
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
@@ -468,6 +470,25 @@ where
             .collect()
     }
 
+    pub fn create_subgraph(&self, nodes: Vec<Index>, is_directed: bool) -> Result<Self> {
+        let mut subgraph: Graph<T> = Graph::default();
+        subgraph.is_directed = is_directed;
+
+        for ind in nodes.iter() {
+            if let Some(node) = self.get_node(ind) {
+                subgraph.add_node(node.clone())?
+            }
+        }
+
+		for (ind, adj) in self.iter() {
+			if let Some(adjacency) = subgraph.adjacency.get_mut(ind) {
+				*adjacency = adj.clone();
+			}
+		}
+
+		Ok(subgraph)
+    }
+
     /// Returns the iter of this [`Graph<T>`].
     pub fn iter(&self) -> GraphIter<T> {
         GraphIter {
@@ -483,6 +504,7 @@ where
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum GraphType {
     Default,
     Tree,
