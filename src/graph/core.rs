@@ -453,6 +453,13 @@ where
         self.adjacency.get(index_node)
     }
 
+    pub fn get_not_visited_nodes_index(&self, visited: &HashSet<Index>) -> Vec<&Index> {
+        self.nodes
+            .keys()
+            .filter(|n| !visited.contains(*n))
+            .collect()
+    }
+
     /// Returns the iter of this [`Graph<T>`].
     pub fn iter(&self) -> GraphIter<T> {
         GraphIter {
