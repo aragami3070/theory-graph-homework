@@ -454,6 +454,44 @@ where
         self.is_directed = true
     }
 
+    pub fn has_edge(&self, from_ind: &Index, to_ind: &Index) -> Result<bool> {
+        if let Some(adj) = self.get_adjacency(from_ind) {
+            for e in adj {
+                if &e.node.number == to_ind {
+                    return Ok(true);
+                }
+            }
+        }
+        Ok(false)
+    }
+
+    pub fn to_not_directed(&self) -> Result<Graph<T>> {
+        let mut not_dir_graph = Graph {
+            is_directed: false,
+            ..Default::default()
+        };
+
+        for (ind, _) in self {
+            if let Some(node) = self.get_node(ind) {
+                not_dir_graph.add_node(node.clone())?
+            }
+        }
+
+        for (ind, adj) in self.iter() {
+            for edge in adj {
+                not_dir_graph.add_edge(
+                    &Node {
+                        number: *ind,
+                        ..Default::default()
+                    },
+                    &edge,
+                )?;
+            }
+        }
+
+        Ok(not_dir_graph)
+    }
+
     pub fn get_node(&self, index_node: &Index) -> Option<&Node<T>> {
         self.nodes.get(index_node)
     }
@@ -474,7 +512,6 @@ where
             is_directed: is_directed,
             ..Default::default()
         };
-        subgraph.is_directed = is_directed;
 
         for ind in nodes.iter() {
             if let Some(node) = self.get_node(ind) {

@@ -8,7 +8,7 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph_1: &mut Graph<T>,
     graph_2: &mut Graph<T>,
 ) -> Result<Graph<T>, Box<dyn Error>> {
-	// Приводим к графы к ориентированным графам, если у них разная ориентация
+    // Приводим к графы к ориентированным графам, если у них разная ориентация
     if graph_1.get_is_directed() != graph_2.get_is_directed() {
         graph_1.to_directed();
         graph_2.to_directed();
@@ -27,7 +27,7 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
                 for edge in adjacency_s.into_iter() {
                     if let Some(node_s) = graph_2.get_node(&edge.node.number) {
                         if adjacency_f.contains(edge) {
-							// Если второй вершины нет новом графе, то добавляем
+                            // Если второй вершины нет новом графе, то добавляем
                             if res_graph.get_node(index).is_none() {
                                 res_graph.add_node(node_s.clone())?;
                             }

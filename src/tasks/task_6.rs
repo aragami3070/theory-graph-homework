@@ -35,3 +35,22 @@ fn bfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
 }
 
+// Выясняет, является ли граф связным.
+pub fn task_6_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
+    graph: &Graph<T>,
+) -> Result<bool> {
+    if graph.get_is_directed() {
+        return Err(Box::new(GraphError::new(
+            GraphKindError::GraphMustBeDirected,
+            "по условию должен быть неориентированный граф",
+        )));
+    }
+
+    let mut visited: HashSet<u32> = HashSet::new();
+
+    if let Some(node_ind) = graph.get_some_node_index() {
+        bfs(graph, node_ind, &mut visited);
+    }
+
+    Ok(visited.len() == graph.len())
+}

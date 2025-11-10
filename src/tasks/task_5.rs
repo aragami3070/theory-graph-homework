@@ -86,7 +86,7 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         // Проходимся по всем смежным вершинам
         for neighbor in adjacency {
             if let Some(color) = visited.get(&neighbor.node.number) {
-            // Если цвет не серый
+                // Если цвет не серый
                 if *color != ColorNode::Gray {
                     if graph_have_cycle(graph, &neighbor.node.number, visited)? {
                         return Ok(true);
