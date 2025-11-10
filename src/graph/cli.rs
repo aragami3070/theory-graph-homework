@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use crate::{
-    graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, Node, GraphType},
+    graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, GraphType, Node},
     tasks::{task_2::task_2_4, task_3::task_3_5, task_4::task_4_6, task_5::task_5_18},
 };
 
@@ -32,7 +32,8 @@ pub fn cli_interface() -> Result<()> {
             "10. Проверить, является ли граф деревом, или лесом, или не \
 			является ни тем, ни другим."
         );
-        println!("11 и больше. Выйти");
+        println!("11. Выяснить, является ли граф связным.");
+        println!("12 и больше. Выйти");
         println!("===========================================================");
 
         input.clear();
@@ -191,12 +192,18 @@ pub fn cli_interface() -> Result<()> {
             }
 
             10 => {
-				println!("Данный граф {}", match task_5_18(&graph)? {
-					GraphType::Tree => "--- дерево",
-					GraphType::Forest => "--- лес",
-					_ => "обычный"
-				})
-			}
+                println!(
+                    "Данный граф {}",
+                    match task_5_18(&graph)? {
+                        GraphType::Tree => "--- дерево",
+                        GraphType::Forest => "--- лес",
+                        _ => "обычный",
+                    }
+                )
+            }
+
+            11 => {}
+
             _ => {
                 break;
             }

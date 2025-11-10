@@ -470,7 +470,10 @@ where
     }
 
     pub fn create_subgraph(&self, nodes: Vec<Index>, is_directed: bool) -> Result<Self> {
-        let mut subgraph: Graph<T> = Graph::default();
+        let mut subgraph: Graph<T> = Graph {
+            is_directed: is_directed,
+            ..Default::default()
+        };
         subgraph.is_directed = is_directed;
 
         for ind in nodes.iter() {
@@ -482,9 +485,15 @@ where
         for (ind, adj) in self.iter() {
             if subgraph.get_node(ind).is_some() {
                 for edge in adj {
-                    let mut def_node = Node::default();
-                    def_node.number = *ind;
-                    subgraph.add_edge(&def_node, &edge)?;
+                    if subgraph.get_node(&edge.node.number).is_some() {
+                        subgraph.add_edge(
+                            &Node {
+                                number: *ind,
+                                ..Default::default()
+                            },
+                            &edge,
+                        )?;
+                    }
                 }
             }
         }

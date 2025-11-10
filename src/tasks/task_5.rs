@@ -52,9 +52,7 @@ fn is_a_forest<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     // Проверяем, что все из них деревья
     let mut is_forest = true;
     for subgraph in subgraphs {
-        println!("{subgraph:?}");
         is_forest = is_a_tree(&subgraph)?;
-        println!("{is_forest}");
         if !is_forest {
             break;
         }
@@ -87,11 +85,13 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     if let Some(adjacency) = graph.get_adjacency(start) {
         // Проходимся по всем смежным вершинам
         for neighbor in adjacency {
-            // Если
-            if let Some(color) = visited.get(&neighbor.node.number)
-                && *color == ColorNode::White
-            {
-                if graph_have_cycle(graph, &neighbor.node.number, visited)? {
+            if let Some(color) = visited.get(&neighbor.node.number) {
+            // Если цвет не серый
+                if *color != ColorNode::Gray {
+                    if graph_have_cycle(graph, &neighbor.node.number, visited)? {
+                        return Ok(true);
+                    }
+                } else {
                     return Ok(true);
                 }
             }
@@ -112,16 +112,22 @@ fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 ) -> Result<bool> {
     let mut count = graph.len();
     let mut cycle = false;
+    let mut is_connected = false;
+
+    let mut visited = graph.get_nodes_with_color();
     for (index, adjacency) in graph {
         count -= adjacency.len();
         if !cycle {
-            let mut visited = graph.get_nodes_with_color();
             cycle = graph_have_cycle(graph, index, &mut visited)?;
+            if !is_connected {
+                is_connected = visited.values().all(|color| *color == ColorNode::Black);
+            }
         }
     }
-    Ok(count == 1 && !cycle)
+    Ok(count == 1 && !cycle && is_connected)
 }
 
+// Проверка является ли граф деревом, лесом или обычным
 pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<GraphType> {
@@ -132,7 +138,7 @@ pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         )));
     }
 
-    if is_a_tree(graph)? {
+    if graph.len() == 0 || is_a_tree(graph)? {
         return Ok(GraphType::Tree);
     }
 
