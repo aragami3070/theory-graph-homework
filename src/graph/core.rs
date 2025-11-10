@@ -1,5 +1,9 @@
 use std::{
-    collections::{HashMap, HashSet, hash_map, hash_set},
+    collections::{
+        HashMap, HashSet,
+        hash_map::{self, Entry},
+        hash_set,
+    },
     error::Error,
     fmt::{Debug, Display},
     fs::File,
@@ -370,8 +374,8 @@ where
     }
 
     pub fn add_node(&mut self, node: Node<T>) -> Result<()> {
-        if !self.adjacency.contains_key(&node.number) {
-            self.adjacency.insert(node.number, Adjacency::default());
+        if let Entry::Vacant(adj) = self.adjacency.entry(node.number) {
+            adj.insert(Adjacency::default());
             self.nodes.insert(node.number, node);
             Ok(())
         } else {
@@ -450,8 +454,8 @@ where
         Ok(readed)
     }
 
-    pub fn to_directed(&mut self) {
-        self.is_directed = true
+    pub fn to_directed_mut(&mut self) {
+        self.is_directed = true;
     }
 
     pub fn has_edge(&self, from_ind: &Index, to_ind: &Index) -> Result<bool> {
@@ -484,7 +488,7 @@ where
                         number: *ind,
                         ..Default::default()
                     },
-                    &edge,
+                    edge,
                 )?;
             }
         }
@@ -509,7 +513,7 @@ where
 
     pub fn create_subgraph(&self, nodes: Vec<Index>, is_directed: bool) -> Result<Self> {
         let mut subgraph: Graph<T> = Graph {
-            is_directed: is_directed,
+            is_directed,
             ..Default::default()
         };
 
@@ -528,7 +532,7 @@ where
                                 number: *ind,
                                 ..Default::default()
                             },
-                            &edge,
+                            edge,
                         )?;
                     }
                 }

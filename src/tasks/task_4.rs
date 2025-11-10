@@ -10,8 +10,8 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 ) -> Result<Graph<T>, Box<dyn Error>> {
     // Приводим к графы к ориентированным графам, если у них разная ориентация
     if graph_1.get_is_directed() != graph_2.get_is_directed() {
-        graph_1.to_directed();
-        graph_2.to_directed();
+        graph_1.to_directed_mut();
+        graph_2.to_directed_mut();
     }
 
     let mut res_graph: Graph<T> = Graph::new(None, Adjacency::default(), graph_1.get_is_directed());
