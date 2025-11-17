@@ -546,6 +546,7 @@ where
         Ok(subgraph)
     }
 
+    /// Returns the get all edges of this [`Graph<T>`].
     pub fn get_all_edges(&self) -> Vec<(Index, Edge<T>)> {
         let mut edges_list: Vec<(Index, Edge<T>)> = Vec::new();
         for (&ind, adj) in self {

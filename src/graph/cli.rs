@@ -9,6 +9,7 @@ use crate::{
     graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, GraphType, Node},
     tasks::{
         task_2::task_2_4, task_3::task_3_5, task_4::task_4_6, task_5::task_5_18, task_6::task_6_4,
+        task_7::task_7_kraskal,
     },
 };
 
@@ -54,7 +55,7 @@ pub fn cli_interface() -> Result<()> {
 
             11 => choice_11(&graph)?,
 
-            12 => choice_12(&graph),
+            12 => choice_12()?,
 
             _ => {
                 break;
@@ -111,7 +112,8 @@ fn choice_1(graph: &mut Graph<u32>) -> Result<()> {
     let node_value: u32 = input.trim().parse()?;
 
     graph.add_node(Node::new(node_number, node_value))?;
-    Ok(println!("{graph}"))
+    println!("{graph}");
+    Ok(())
 }
 
 fn choice_2(graph: &mut Graph<u32>) -> Result<()> {
@@ -151,7 +153,8 @@ fn choice_2(graph: &mut Graph<u32>) -> Result<()> {
 
         graph.add_edge(&Node::new(node_number, node_value), &new_edge)?;
     }
-    Ok(println!("{graph}"))
+    println!("{graph}");
+    Ok(())
 }
 
 fn choice_3(graph: &mut Graph<u32>) -> Result<()> {
@@ -162,7 +165,8 @@ fn choice_3(graph: &mut Graph<u32>) -> Result<()> {
     let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
 
     graph.delete_node(&node)?;
-    Ok(println!("{graph}"))
+    println!("{graph}");
+    Ok(())
 }
 
 fn choice_4(graph: &mut Graph<u32>) -> Result<()> {
@@ -179,7 +183,8 @@ fn choice_4(graph: &mut Graph<u32>) -> Result<()> {
     let edge_index: u32 = input.trim().parse()?;
 
     graph.delete_edge(&node, &edge_index)?;
-    Ok(println!("{graph}"))
+    println!("{graph}");
+    Ok(())
 }
 
 fn choice_5<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>(
@@ -191,7 +196,8 @@ fn choice_5<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>
     std::io::stdin().read_line(&mut input)?;
 
     graph.write_in_file(input.trim_end())?;
-    Ok(println!("Граф сохранен"))
+    println!("Граф сохранен");
+    Ok(())
 }
 
 fn choice_6<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>()
@@ -223,7 +229,7 @@ fn choice_7<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>
 
     println!(
         "Полустепень захода вершины {{{node_number}}} = {}",
-        task_2_4(&graph, &node_number)?
+        task_2_4(graph, &node_number)?
     );
     Ok(())
 }
@@ -231,7 +237,7 @@ fn choice_7<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>
 fn choice_8<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<()> {
-    for (index, count) in task_3_5(&graph)? {
+    for (index, count) in task_3_5(graph)? {
         println!("Степень вершины {{{index}}} = {count}")
     }
 
@@ -247,8 +253,8 @@ fn choice_9<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>
     std::io::stdin().read_line(&mut input)?;
 
     let mut other_graph: Graph<T> = Graph::new_from_file(input.trim_end())?;
-
-    Ok(println!("{}", task_4_6(graph, &mut other_graph)?))
+    println!("{}", task_4_6(graph, &mut other_graph)?);
+    Ok(())
 }
 
 fn choice_10<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>(
@@ -256,7 +262,7 @@ fn choice_10<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default
 ) -> Result<()> {
     println!(
         "Данный граф {}",
-        match task_5_18(&graph)? {
+        match task_5_18(graph)? {
             GraphType::Tree => "--- дерево",
             GraphType::Forest => "--- лес",
             _ => "не является ни дервом ни лесом",
@@ -270,7 +276,7 @@ fn choice_11<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default
 ) -> Result<()> {
     println!(
         "Данный граф: {}",
-        match task_6_4(&graph)? {
+        match task_6_4(graph)? {
             true => "связен",
             false => "не связен",
         }
@@ -278,7 +284,13 @@ fn choice_11<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default
     Ok(())
 }
 
-fn choice_12<T: Display + Clone + DeserializeOwned + Debug + Serialize + Default>(
-    graph: &Graph<T>,
-) {
+fn choice_12() -> Result<()> {
+    println!("Введите путь до файла (для временного графа):");
+
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input)?;
+
+    let other_graph: Graph<String> = Graph::new_from_file(input.trim_end())?;
+    println!("{}", task_7_kraskal(&other_graph)?);
+    Ok(())
 }
