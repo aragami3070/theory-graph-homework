@@ -475,6 +475,10 @@ where
             ..Default::default()
         };
 
+        if self.len() == 0 {
+            return Ok(not_dir_graph);
+        }
+
         for (ind, _) in self {
             if let Some(node) = self.get_node(ind) {
                 not_dir_graph.add_node(node.clone())?
@@ -540,6 +544,18 @@ where
         }
 
         Ok(subgraph)
+    }
+
+    pub fn get_all_edges(&self) -> Vec<(Index, Edge<T>)> {
+        let mut edges_list: Vec<(Index, Edge<T>)> = Vec::new();
+        for (&ind, adj) in self {
+            for edge in adj {
+                edges_list.push((ind, edge.clone()));
+            }
+        }
+
+        edges_list.sort_by(|(_, edge1), (_, edge2)| edge1.weight.cmp(&edge2.weight));
+        edges_list
     }
 
     /// Returns the iter of this [`Graph<T>`].
