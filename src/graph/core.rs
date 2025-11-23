@@ -560,14 +560,14 @@ where
     }
 
     /// Returns the iter of this [`Graph<T>`].
-    pub fn iter(&self) -> GraphIter<T> {
+    pub fn iter(&self) -> GraphIter<'_, T> {
         GraphIter {
             inner: self.adjacency.iter(),
         }
     }
 
     /// Returns the mut iter of this [`Graph<T>`].
-    pub fn iter_mut(&mut self) -> GraphIterMut<T> {
+    pub fn iter_mut(&mut self) -> GraphIterMut<'_, T> {
         GraphIterMut {
             inner: self.adjacency.iter_mut(),
         }
