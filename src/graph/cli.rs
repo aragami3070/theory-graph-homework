@@ -9,7 +9,7 @@ use crate::{
     graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, GraphType, Node},
     tasks::{
         task_2::task_2_4, task_3::task_3_5, task_4::task_4_6, task_5::task_5_18, task_6::task_6_4,
-        task_7::task_7_kraskal,
+        task_7::task_7_kraskal, task_8::task_8_1,
     },
 };
 
@@ -57,7 +57,7 @@ pub fn cli_interface() -> Result<()> {
 
             12 => choice_12()?,
 
-            13 => {}
+            13 => choice_13()?,
 
             14 => {}
 
@@ -311,5 +311,36 @@ fn choice_12() -> Result<()> {
 
     let other_graph: Graph<String> = Graph::new_from_file(input.trim_end())?;
     println!("{}", task_7_kraskal(&other_graph)?);
+    Ok(())
+}
+
+fn choice_13() -> Result<()> {
+    println!("Введите путь до файла (для временного графа):");
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input)?;
+    let other_graph: Graph<String> = Graph::new_from_file(input.trim_end())?;
+
+    println!("Введите индекс начальной точки:");
+    input.clear();
+    std::io::stdin().read_line(&mut input)?;
+    let start: u32 = input.trim().parse()?;
+
+    println!("Введите индекс конечной точки:");
+    input.clear();
+    std::io::stdin().read_line(&mut input)?;
+    let destination: u32 = input.trim().parse()?;
+
+    println!("Введите максимальную длину пути:");
+    input.clear();
+    std::io::stdin().read_line(&mut input)?;
+    let weight_limit: u32 = input.trim().parse()?;
+
+    println!(
+        "{}",
+        match task_8_1(&other_graph, start, destination, weight_limit)? {
+            true => "Существует",
+            false => "Не существует",
+        }
+    );
     Ok(())
 }
