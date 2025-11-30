@@ -1,4 +1,4 @@
-use std::{collections::HashSet, error::Error, fmt::Debug};
+use std::{collections::HashMap, error::Error, fmt::Debug};
 
 use serde::{Serialize, de::DeserializeOwned};
 
@@ -6,8 +6,93 @@ use crate::graph::core::{Graph, GraphError, GraphKindError};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+fn floid_uorshel<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
+    graph: &Graph<T>,
+    pos_for_index: &HashMap<u32, usize>,
+) -> Vec<Vec<u32>> {
+    let mut dist = vec![vec![u32::MAX; graph.len()]; graph.len()];
+    for i in 0..graph.len() {
+        dist[i][i] = 0;
+    }
+
+    // Заполняем dist минимальным расстоянием из одной вершины в другую
+    for (ind_from, adj) in graph.iter() {
+        let from = pos_for_index[ind_from];
+        for edge in adj {
+            let to = pos_for_index[&edge.node.number];
+            dist[from][to] = dist[from][to].min(edge.weight);
+        }
+    }
+
+    // Проходимся по всем вершинам и находим более короткие пути,
+    // через другие вершины
+    for middle in 0..graph.len() {
+        for from in 0..graph.len() {
+            if dist[from][middle] == u32::MAX {
+                continue;
+            }
+            for to in 0..graph.len() {
+                if dist[middle][to] == u32::MAX {
+                    continue;
+                }
+                // Если через middle путь короче, то обновляем dist[from][to]
+                let through_middle = dist[from][middle] + dist[middle][to];
+                if through_middle < dist[from][to] {
+                    dist[from][to] = through_middle;
+                }
+            }
+        }
+    }
+    dist
+}
+
 pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
-) -> Result<Graph<T>> {
-    Ok(graph.clone())
+    limit: &u32,
+) -> Result<i32> {
+    if graph.get_is_directed() {
+        return Err(Box::new(GraphError::new(
+            GraphKindError::GraphMustBeDirected,
+            "по условию должен быть неориентированный граф",
+        )));
+    }
+
+    // HashMap для сопостовления индекса вершины с индексом в dist
+    let pos_for_index: HashMap<u32, usize> = graph
+        .iter()
+        .enumerate()
+        .map(|(i, (&ind, _))| (ind, i))
+        .collect();
+
+    let dist = floid_uorshel(graph, &pos_for_index);
+
+    'nodes: for node_ind in 0..graph.len() {
+        for edge_ind in 0..graph.len() {
+            if node_ind == edge_ind {
+                continue;
+            }
+            // Если нет пути или путь слишком длинный, то node_ind не подходит
+            if dist[node_ind][edge_ind] > *limit {
+                continue 'nodes;
+            }
+        }
+
+        // Если вершина подошла
+        return Ok(
+            match pos_for_index
+                .iter()
+                .find_map(|(key, &val)| if val == node_ind { Some(key) } else { None })
+            {
+                Some(key) => *key as i32,
+                None => {
+                    return Err(Box::new(GraphError::new(
+                        GraphKindError::NodeNotFound,
+                        "что-то пошло не так",
+                    )));
+                }
+            },
+        );
+    }
+
+    Ok(-1)
 }

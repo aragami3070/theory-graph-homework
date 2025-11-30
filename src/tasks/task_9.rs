@@ -53,7 +53,7 @@ fn bellman_ford<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 /// Ошибка типа: [`GraphError`]
 pub fn task_9_2<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
-    cost_weight: &u32,
+    limit: &u32,
 ) -> Result<i32> {
     if graph.get_is_directed() {
         return Err(Box::new(GraphError::new(
@@ -64,7 +64,7 @@ pub fn task_9_2<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 
     for (start, _) in graph {
         let res = bellman_ford(graph, start);
-        if res > 0 && res <= *cost_weight {
+        if res > 0 && res <= *limit {
             return Ok(*start as i32);
         }
     }
