@@ -51,7 +51,7 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
 
     // Заполняем остов вершинами
     for (index, _) in edges_list.iter() {
-        if let Some(node) = graph.get_node(&index)
+        if let Some(node) = graph.get_node(index)
             && new_graph.get_node(index).is_none()
         {
             new_graph.add_node(node.clone())?
@@ -62,7 +62,7 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
     for (index, edge) in edges_list.iter() {
         if let Some(node) = graph.get_node(index) {
             // Добавляем ребро
-            new_graph.add_edge(node, &edge)?;
+            new_graph.add_edge(node, edge)?;
 
             // Проверяем нет ли цикла
             let mut visited = HashSet::new();

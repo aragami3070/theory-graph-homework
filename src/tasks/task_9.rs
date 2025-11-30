@@ -13,25 +13,25 @@ fn bellman_ford<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     start: &u32,
 ) -> u32 {
     // Создаем HashMap из индекса вершины и длины пути до нее
-	// (изначально максимум для u32)
+    // (изначально максимум для u32)
     let mut dist = HashMap::new();
     for (index, _) in graph.iter() {
-        dist.insert(*index, std::u32::MAX);
+        dist.insert(*index, u32::MAX);
     }
 
-	// Для вершины start длина пути 0
+    // Для вершины start длина пути 0
     dist.insert(*start, 0);
 
-	// Перебираем все ребра
+    // Перебираем все ребра
     for _ in 0..graph.len() - 1 {
         for (ind, adj) in graph.iter() {
             for edge in adj {
                 let edge_node_num = edge.node.number;
-				// Если вес ребра короче чем чем текущее значение в dist
-                if dist[&edge_node_num] != std::u32::MAX
+                // Если вес ребра короче чем чем текущее значение в dist
+                if dist[&edge_node_num] != u32::MAX
                     && dist[ind] > dist[&edge_node_num] + edge.weight
                 {
-					// Обновляем значение веса для данной вершины
+                    // Обновляем значение веса для данной вершины
                     dist.insert(*ind, dist[&edge_node_num] + edge.weight);
                 }
             }
@@ -41,7 +41,7 @@ fn bellman_ford<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     dist.iter()
         .filter(|&(ind, _)| ind != start) // не учитываем расстояние от start
         .map(|(_, weight)| *weight)
-        .filter(|&v| v != std::u32::MAX) // не учитываем недостижимые
+        .filter(|&v| v != u32::MAX) // не учитываем недостижимые
         .sum::<u32>()
 }
 

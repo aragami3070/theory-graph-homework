@@ -21,7 +21,7 @@ fn deikstra<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 
     // Для всех вершин кроме начальной выставляем максимум
     for (index, _) in graph.iter() {
-        dist.insert(*index, std::u32::MAX);
+        dist.insert(*index, u32::MAX);
     }
 
     // Ставим 0 для начальной вершины
