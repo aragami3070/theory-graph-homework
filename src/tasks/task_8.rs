@@ -34,7 +34,7 @@ fn deikstra<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             break;
         }
 
-        //  Если дошли до
+        // Если дошли до нужной вершины
         if cur_node == destination {
             return true;
         }
@@ -43,6 +43,8 @@ fn deikstra<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             for edge in adj {
                 let node = edge.node.number;
                 let new_weight = weight + edge.weight;
+
+                // Если сосдед не посящен
                 if new_weight < dist[&node] && new_weight <= weight_limit {
                     dist.insert(node, new_weight);
                     heap.push((new_weight, node));
