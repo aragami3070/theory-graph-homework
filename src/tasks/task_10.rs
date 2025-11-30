@@ -11,8 +11,9 @@ fn floid_uorshel<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     pos_for_index: &HashMap<u32, usize>,
 ) -> Vec<Vec<u32>> {
     let mut dist = vec![vec![u32::MAX; graph.len()]; graph.len()];
-    for i in 0..graph.len() {
-        dist[i][i] = 0;
+
+    for (i, dst) in dist.iter_mut().enumerate() {
+        dst[i] = 0;
     }
 
     // Заполняем dist минимальным расстоянием из одной вершины в другую
@@ -66,13 +67,13 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 
     let dist = floid_uorshel(graph, &pos_for_index);
 
-    'nodes: for node_ind in 0..graph.len() {
-        for edge_ind in 0..graph.len() {
+    'nodes: for (node_ind, cur_dists) in dist.iter().enumerate() {
+        for (edge_ind, weight) in cur_dists.iter().enumerate() {
             if node_ind == edge_ind {
                 continue;
             }
             // Если нет пути или путь слишком длинный, то node_ind не подходит
-            if dist[node_ind][edge_ind] > *limit {
+            if weight > limit {
                 continue 'nodes;
             }
         }
