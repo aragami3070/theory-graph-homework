@@ -6,14 +6,14 @@ use std::{
 
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::graph::core::{Graph, GraphError, GraphKindError};
+use crate::graph::core::{Graph, GraphError, GraphKindError, Index};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 fn deikstra<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
-    start: u32,
-    destination: u32,
+    start: Index,
+    destination: Index,
     weight_limit: u32,
 ) -> bool {
     let mut dist = HashMap::new();
@@ -69,5 +69,5 @@ pub fn task_8_1<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         )));
     }
 
-    Ok(deikstra(graph, start, destination, weight_limit))
+    Ok(deikstra(graph, start.into(), destination.into(), weight_limit))
 }

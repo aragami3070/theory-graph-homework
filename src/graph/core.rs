@@ -9,11 +9,41 @@ use std::{
     fs::File,
     hash::Hash,
     io::{BufReader, BufWriter, Write},
+    ops::Deref,
 };
 
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 
-type Index = u32;
+#[derive(Debug, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct Index(pub u32);
+
+
+impl PartialEq<u32> for Index
+where
+{
+    fn eq(&self, other: &u32) -> bool {
+        self.0 == *other
+    }
+}
+impl Deref for Index {
+    type Target = u32;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl Display for Index {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl From<u32> for Index {
+    fn from(value: u32) -> Self {
+        Index(value)
+    }
+}
+
 type Weight = u32;
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 type PairEdges<T> = (Option<Edge<T>>, Option<Edge<T>>);
@@ -91,7 +121,7 @@ where
 {
     fn default() -> Self {
         Node::<T> {
-            number: 0,
+            number: 0.into(),
             value: T::default(),
         }
     }

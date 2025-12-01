@@ -2,7 +2,7 @@ use std::{collections::HashMap, error::Error, fmt::Debug};
 
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::graph::core::{Graph, GraphError, GraphKindError};
+use crate::graph::core::{Graph, GraphError, GraphKindError, Index};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -10,7 +10,7 @@ type Result<T> = std::result::Result<T, Box<dyn Error>>;
 /// вершины start
 fn bellman_ford<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
-    start: &u32,
+    start: &Index,
 ) -> u32 {
     // Создаем HashMap из индекса вершины и длины пути до нее
     // (изначально максимум для u32)
@@ -46,7 +46,7 @@ fn bellman_ford<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 }
 
 /// Найти в [`Graph<T>`] вершину, минимальные стоимости путей от которой до
-/// остальных в сумме не превосходят cost_weight
+/// остальных в сумме не превосходят limit
 ///
 /// # Errors
 /// Эта функция вернет ошибку, если граф ориентированный.
@@ -65,7 +65,7 @@ pub fn task_9_2<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     for (start, _) in graph {
         let res = bellman_ford(graph, start);
         if res > 0 && res <= *limit {
-            return Ok(*start as i32);
+            return Ok((**start) as i32);
         }
     }
 

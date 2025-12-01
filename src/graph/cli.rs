@@ -148,7 +148,7 @@ fn choice_1(graph: &mut Graph<u32>) -> Result<()> {
     std::io::stdin().read_line(&mut input)?;
     let node_value: u32 = input.trim().parse()?;
 
-    graph.add_node(Node::new(node_number, node_value))?;
+    graph.add_node(Node::new(node_number.into(), node_value))?;
     println!("{graph}");
     Ok(())
 }
@@ -178,17 +178,17 @@ fn choice_2(graph: &mut Graph<u32>) -> Result<()> {
     std::io::stdin().read_line(&mut input)?;
     let edge_node_weight: u32 = input.trim().parse()?;
 
-    let new_edge = Edge::new(&edge_node_number, edge_node_weight, &edge_node_value);
+    let new_edge = Edge::new(&edge_node_number.into(), edge_node_weight, &edge_node_value);
 
     if graph.get_is_directed() {
-        graph.add_edge(&Node::new(node_number, 0), &new_edge)?;
+        graph.add_edge(&Node::new(node_number.into(), 0), &new_edge)?;
     } else {
         println!("Введите значение вершины из которой будет выходить ребро:");
         input.clear();
         std::io::stdin().read_line(&mut input)?;
         let node_value: u32 = input.trim().parse()?;
 
-        graph.add_edge(&Node::new(node_number, node_value), &new_edge)?;
+        graph.add_edge(&Node::new(node_number.into(), node_value), &new_edge)?;
     }
     println!("{graph}");
     Ok(())
@@ -199,7 +199,7 @@ fn choice_3(graph: &mut Graph<u32>) -> Result<()> {
 
     let mut input = String::new();
     std::io::stdin().read_line(&mut input)?;
-    let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
+    let node: Node<u32> = Node::new(input.trim().parse::<u32>()?.into(), 0);
 
     graph.delete_node(&node)?;
     println!("{graph}");
@@ -211,7 +211,7 @@ fn choice_4(graph: &mut Graph<u32>) -> Result<()> {
 
     let mut input = String::new();
     std::io::stdin().read_line(&mut input)?;
-    let node: Node<u32> = Node::new(input.trim().parse::<u32>()?, 0);
+    let node: Node<u32> = Node::new(input.trim().parse::<u32>()?.into(), 0);
 
     println!("Введите номер вершины куда идет ребро:");
 
@@ -219,7 +219,7 @@ fn choice_4(graph: &mut Graph<u32>) -> Result<()> {
     std::io::stdin().read_line(&mut input)?;
     let edge_index: u32 = input.trim().parse()?;
 
-    graph.delete_edge(&node, &edge_index)?;
+    graph.delete_edge(&node, &edge_index.into())?;
     println!("{graph}");
     Ok(())
 }

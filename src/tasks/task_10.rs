@@ -2,13 +2,13 @@ use std::{collections::HashMap, error::Error, fmt::Debug};
 
 use serde::{Serialize, de::DeserializeOwned};
 
-use crate::graph::core::{Graph, GraphError, GraphKindError};
+use crate::graph::core::{Graph, GraphError, GraphKindError, Index};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 fn floid_uorshel<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
-    pos_for_index: &HashMap<u32, usize>,
+    pos_for_index: &HashMap<Index, usize>,
 ) -> Vec<Vec<u32>> {
     let mut dist = vec![vec![u32::MAX; graph.len()]; graph.len()];
 
@@ -47,6 +47,12 @@ fn floid_uorshel<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     dist
 }
 
+/// Найти в [`Graph<T>`] вершину, каждая из минимальных стоимостей пути от
+/// которой до остальных не превосходит limit.
+///
+/// # Errors
+/// Эта функция вернет ошибку, если граф ориентированный.
+/// Ошибка типа: [`GraphError`]
 pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     limit: &u32,
@@ -59,7 +65,7 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
 
     // HashMap для сопостовления индекса вершины с индексом в dist
-    let pos_for_index: HashMap<u32, usize> = graph
+    let pos_for_index: HashMap<Index, usize> = graph
         .iter()
         .enumerate()
         .map(|(i, (&ind, _))| (ind, i))
@@ -72,7 +78,7 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             if node_ind == edge_ind {
                 continue;
             }
-            // Если нет пути или путь слишком длинный, то node_ind не подходит
+            // Если путь слишком длинный, то node_ind не подходит
             if weight > limit {
                 continue 'nodes;
             }
@@ -84,7 +90,7 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
                 .iter()
                 .find_map(|(key, &val)| if val == node_ind { Some(key) } else { None })
             {
-                Some(key) => *key as i32,
+                Some(key) => key.0 as i32,
                 None => {
                     return Err(Box::new(GraphError::new(
                         GraphKindError::NodeNotFound,

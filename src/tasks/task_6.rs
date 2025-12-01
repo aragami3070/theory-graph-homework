@@ -21,14 +21,14 @@ fn bfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 
     // Пока в очереди есть вершины
     while let Some(current) = queue.pop_front() {
-        if let Some(adjacency) = graph.get_adjacency(&current) {
+        if let Some(adjacency) = graph.get_adjacency(&current.into()) {
             for neighbor in adjacency {
                 let neighbor_index = neighbor.node.number;
                 // Если смежная вершина не посещена, то добавляем в очередь
                 // и отмечаем как посещенную
                 if !visited.contains(&neighbor_index) {
-                    visited.insert(neighbor_index);
-                    queue.push_back(neighbor_index);
+                    visited.insert(*neighbor_index);
+                    queue.push_back(*neighbor_index);
                 }
             }
         }
