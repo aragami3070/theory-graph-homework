@@ -9,8 +9,7 @@ use serde::{Serialize, de::DeserializeOwned};
 use crate::{
     graph::core::{Adjacency, Edge, Graph, GraphError, GraphKindError, GraphType, Node},
     tasks::{
-        task_2::task_2_4, task_3::task_3_5, task_4::task_4_6, task_5::task_5_18, task_6::task_6_4,
-        task_7::task_7_kraskal, task_8::task_8_1, task_9::task_9_2, task_10::task_10_3,
+        task_10::task_10_3, task_11::task_11 , task_2::task_2_4, task_3::task_3_5, task_4::task_4_6, task_5::task_5_18, task_6::task_6_4, task_7::task_7_kraskal, task_8::task_8_1, task_9::task_9_2
     },
 };
 
@@ -64,7 +63,7 @@ pub fn cli_interface() -> Result<()> {
 
             15 => choice_15()?,
 
-            16 => {}
+            16 => choice_16()?,
 
             _ => {
                 break;
@@ -410,3 +409,25 @@ fn choice_15() -> Result<()> {
     );
     Ok(())
 }
+
+fn choice_16() -> Result<()> {
+    println!("Введите путь до файла (для временного графа):");
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input)?;
+    let other_graph: Graph<String> = Graph::new_from_file(input.trim_end())?;
+
+    println!("Введите номер вершины истока:");
+    input.clear();
+    std::io::stdin().read_line(&mut input)?;
+    let source: u32 = input.trim().parse()?;
+
+    println!("Введите номер вершины истока:");
+    input.clear();
+    std::io::stdin().read_line(&mut input)?;
+    let stock: u32 = input.trim().parse()?;
+
+    println!("Максимальный поток = {}", task_11(&other_graph, source.into(), stock.into())?);
+
+    Ok(())
+}
+
