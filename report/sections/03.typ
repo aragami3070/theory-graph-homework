@@ -1,16 +1,41 @@
 = Список смежности IIa
 == Условие
-
+Для каждой вершины орграфа вывести её степень.
 == Код (фрагменты кода)
-```cpp
+```rust
+use std::{error::Error, fmt::Debug};
+
+use serde::{Serialize, de::DeserializeOwned};
+
+use crate::graph::core::{Graph, GraphError, GraphKindError};
+
+/// Получить степень каждой вершины орграфа
+pub fn task_3_5<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
+    graph: &Graph<T>,
+) -> Result<Vec<(u32, u32)>, Box<dyn Error>> {
+    if !graph.get_is_directed() {
+        return Err(Box::new(GraphError::new(
+            GraphKindError::GraphMustBeDirected,
+            "по условию должен быть орграф",
+        )));
+    }
+    // Вектор пар (вершина, степень вершины)
+    let mut result: Vec<(u32, u32)> = Vec::new();
+    for (&node_index, adjacency) in graph {
+        // заполняем вектор парами (вершина, количество ребер)
+        result.push((*node_index, adjacency.len().try_into().unwrap()));
+    }
+    Ok(result)
+}
 ```
 
 == Краткое описание алгоритма
+Данный алгоритм вычисляет степени всех вершин в ориентированном графе (орграфе).
 
 === Что делает
-+
-+
-+
++ Проверяет, что граф является ориентированным (орграфом), иначе возвращает ошибку
++ Перебирает все вершины и их смежности в графе
++ Формирует вектор пар (индекс_вершины, количество_исходящих_ребер) для каждой вершины
 
 == Примеры входных и выходных данных
 
