@@ -90,7 +90,7 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
                 .iter()
                 .find_map(|(key, &val)| if val == node_ind { Some(key) } else { None })
             {
-                Some(key) => key.0 as i32,
+                Some(&key) => *key as i32,
                 None => {
                     return Err(Box::new(GraphError::new(
                         GraphKindError::NodeNotFound,

@@ -35,7 +35,7 @@ fn bfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
 }
 
-// Выясняет, является ли граф связным.
+//// Выясняет, является ли граф связным.
 pub fn task_6_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<bool> {

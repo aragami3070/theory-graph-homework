@@ -17,6 +17,7 @@ pub fn task_3_5<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     // Вектор пар (вершина, степень вершины)
     let mut result: Vec<(u32, u32)> = Vec::new();
     for (&node_index, adjacency) in graph {
+        // заполняем вектор парами (вершина, количество ребер)
         result.push((*node_index, adjacency.len().try_into().unwrap()));
     }
     Ok(result)

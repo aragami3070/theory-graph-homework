@@ -69,5 +69,10 @@ pub fn task_8_1<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         )));
     }
 
-    Ok(deikstra(graph, start.into(), destination.into(), weight_limit))
+    Ok(deikstra(
+        graph,
+        start.into(),
+        destination.into(),
+        weight_limit,
+    ))
 }

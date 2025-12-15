@@ -393,6 +393,10 @@ where
             .collect::<HashMap<Index, ColorNode>>()
     }
 
+    pub fn get_all_nodes(&self) -> HashMap<Index, Node<T>> {
+        self.nodes.clone()
+    }
+
     /// Returns the length of this [`Graph<T>`].
     pub fn len(&self) -> usize {
         self.nodes.len()

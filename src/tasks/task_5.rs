@@ -34,6 +34,7 @@ fn dfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
 }
 
+/// Проверка на лес
 fn is_a_forest<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<bool> {
@@ -61,7 +62,7 @@ fn is_a_forest<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     Ok(is_forest)
 }
 
-// Проверяет есть ли цикл в графе из вершины start
+/// Проверяет есть ли цикл в графе из вершины start
 fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     start: &u32,
@@ -106,7 +107,7 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     Ok(false)
 }
 
-// Проверка является ли граф деревом
+/// Проверка является ли граф деревом
 fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<bool> {
@@ -114,12 +115,8 @@ fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     let mut cycle = false;
     let mut is_connected = false;
 
-    println!("Function start");
     let mut visited = graph.get_nodes_with_color();
     for (index, adjacency) in graph {
-        println!("count: {count}");
-        println!("adjacency.len(): {}", adjacency.len());
-
         count += adjacency.len();
         if !cycle {
             cycle = graph_have_cycle(graph, index, &mut visited)?;
@@ -131,7 +128,7 @@ fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     Ok((graph.len() as i64 - count as i64) == 1 && !cycle && is_connected)
 }
 
-// Проверка является ли граф деревом, лесом или обычным
+/// Проверка является ли граф деревом, лесом или обычным
 pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<GraphType> {
