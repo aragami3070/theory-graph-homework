@@ -2,13 +2,8 @@
 == Условие
 Построить граф, являющийся пересечением двух заданных.
 == Код (фрагменты кода)
+#set text(size: 12pt)
 ```rust
-use std::{error::Error, fmt::Debug};
-
-use serde::{Serialize, de::DeserializeOwned};
-
-use crate::graph::core::{Adjacency, Graph};
-
 pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph_1: &mut Graph<T>,
     graph_2: &mut Graph<T>,
@@ -48,6 +43,7 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 }
 ```
 
+#set text(size: 14pt)
 == Краткое описание алгоритма
 Данный алгоритм вычисляет пересечение двух графов, создавая новый граф с общими
 вершинами и ребрами.

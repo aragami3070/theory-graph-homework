@@ -2,18 +2,9 @@
 == Условие
 Выяснить, является ли граф связным.
 == Код (фрагменты кода)
+#set text(size: 12pt)
 ```rust
-use std::{
-    collections::{HashSet, VecDeque},
-    error::Error,
-    fmt::Debug,
-};
-
-use serde::{Serialize, de::DeserializeOwned};
-
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
-use crate::graph::core::{Graph, GraphError, GraphKindError};
-
 fn bfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     start: &u32,
@@ -60,6 +51,7 @@ pub fn task_6_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     Ok(visited.len() == graph.len())
 }
 ```
+#set text(size: 14pt)
 == Краткое описание алгоритма
 Данный алгоритм проверяет связность неориентированного графа с помощью BFS
 обхода от произвольной вершины.
@@ -68,14 +60,14 @@ pub fn task_6_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 Проверяет, является ли граф связным --- все вершины достижимы друг из друга:
 - Выполняет BFS от одной стартовой вершины
 - Сравнивает количество посещенных вершин с общим числом вершин
-- Возвращает `true`, если граф связный, `false` --- иначе
+- Возвращает true, если граф связный, false --- иначе
 
 Шаги алгоритма:
 1. Проверка условий
   - Работает только для неориентированных графов
   - Возвращает ошибку для ориентированных графов
 2. Инициализация BFS
-  - Берет произвольную стартовую вершину через `get_some_node_index()`
+  - Берет произвольную стартовую вершину через get_some_node_index()
   - Создает множество посещенных вершин
 3. BFS обход
   - Инициализирует очередь с стартовой вершиной
@@ -87,8 +79,8 @@ pub fn task_6_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     - Помечает как посещенный
     - Добавляет в очередь
 5. Проверка связности
-  - Сравнивает размер множества посещенных с `graph.len()`
-  - `visited.len() == graph.len()` --- граф связный
+  - Сравнивает размер множества посещенных с graph.len()
+  - visited.len() == graph.len() --- граф связный
 
 == Примеры входных и выходных данных
 

@@ -2,16 +2,10 @@
 == Условие
 Найти каркас минимального веса в неориентированном графе.
 == Код (фрагменты кода)
+#set text(size: 12pt)
 
 ```rust
-use std::{collections::HashSet, error::Error, fmt::Debug};
-
-use serde::{Serialize, de::DeserializeOwned};
-
-use crate::graph::core::{Graph, GraphError, GraphKindError, Index};
-
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
-
 fn has_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     current: Index,
@@ -83,6 +77,7 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
 }
 ```
 
+#set text(size: 14pt)
 == Краткое описание алгоритма
 Данный алгоритм реализует алгоритм Краскала для построения минимального
 остовного дерева (MST) неориентированного взвешенного графа.
@@ -98,7 +93,7 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
   - Работает только для неориентированных графов
   - Возвращает ошибку для ориентированных графов
 2. Сбор всех рёбер
-  - Получает все ребра графа через `get_all_edges()`
+  - Получает все ребра графа через get_all_edges()
   - Автоматически сортирует ребра по возрастанию веса
 3. Инициализация MST
   - Создаёт новый неориентированный граф

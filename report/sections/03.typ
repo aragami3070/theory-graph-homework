@@ -2,13 +2,8 @@
 == Условие
 Для каждой вершины орграфа вывести её степень.
 == Код (фрагменты кода)
+#set text(size: 12pt)
 ```rust
-use std::{error::Error, fmt::Debug};
-
-use serde::{Serialize, de::DeserializeOwned};
-
-use crate::graph::core::{Graph, GraphError, GraphKindError};
-
 /// Получить степень каждой вершины орграфа
 pub fn task_3_5<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
@@ -29,6 +24,7 @@ pub fn task_3_5<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 }
 ```
 
+#set text(size: 14pt)
 == Краткое описание алгоритма
 Данный алгоритм вычисляет степени всех вершин в ориентированном графе
 (орграфе).

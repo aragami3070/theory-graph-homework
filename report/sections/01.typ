@@ -30,28 +30,11 @@
 В зависимости от выбранного способа хранения графа могут появиться дополнительные трудности при удалении-добавлении, например, необходимость переименования вершин, если граф хранится списком $($например, vector C++, List C#$)$. Этого можно избежать, если хранить в списке пару (имя вершины, список смежных вершин), или хранить в другой структуре (например, Dictionary C#$,$ map в С++, при этом список смежности вершины может также храниться в виде словаря с ключами - смежными вершинами и значениями - весами соответствующих ребер). Идеально, если в качестве вершины реализуется обобщенный тип (generic), но достаточно использовать строковый тип или свой класс.
 
 == код (фрагменты кода)
+#set text(size: 12pt)
 
 ```rust
-use std::{
-    collections::{
-        HashMap, HashSet,
-        hash_map::{self, Entry},
-        hash_set,
-    },
-    error::Error,
-    fmt::{Debug, Display},
-    fs::File,
-    hash::Hash,
-    io::{BufReader, BufWriter, Write},
-    ops::Deref,
-};
-
-use serde::{Deserialize, Serialize, de::DeserializeOwned};
-
 #[derive(Debug, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub struct Index(pub u32);
-
-
 impl PartialEq<u32> for Index
 where
 {
@@ -141,7 +124,6 @@ impl Display for GraphError {
 }
 
 // Node part
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Node<T> {
     pub number: Index,
@@ -171,7 +153,6 @@ impl<T> Node<T> {
 }
 
 // Edge part
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Edge<T>
 where
@@ -240,7 +221,6 @@ where
 }
 
 // Adjacency part
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Adjacency<T>
 where
@@ -348,7 +328,6 @@ where
 }
 
 // Graph part
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Graph<T>
 where
@@ -712,6 +691,7 @@ where
     }
 }
 ```
+#set text(size: 14pt)
 == Пример интерфейса в консоли
 Примечание: в меню уже добавлены пункты, которые выполняли задания, которые были выданы на практике.
 

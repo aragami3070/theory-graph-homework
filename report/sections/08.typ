@@ -3,19 +3,9 @@
 Определить, существует ли путь длиной не более $L$ между двумя заданными
 вершинами графа.
 == Код (фрагменты кода)
+#set text(size: 12pt)
 ```rust
-use std::{
-    collections::{BinaryHeap, HashMap},
-    error::Error,
-    fmt::Debug,
-};
-
-use serde::{Serialize, de::DeserializeOwned};
-
-use crate::graph::core::{Graph, GraphError, GraphKindError, Index};
-
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
-
 fn deikstra<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     start: Index,
@@ -84,38 +74,39 @@ pub fn task_8_1<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 }
 ```
 
+#set text(size: 14pt)
 == Краткое описание алгоритма
 Данный алгоритм реализует модифицированный алгоритм Дейкстры для проверки
 достижения вершины с ограничением по весу пути в неориентированном графе.
 
 === Что делает
 Проверяет, существует ли путь от стартовой вершины до целевой с весом $lt.eq$
-`weight_limit`:
+weight_limit:
 - Находит кратчайший путь с приоритетной очередью (BinaryHeap)
-- Прерывает поиск при превышении `weight_limit`
-- Возвращает `true`, если целевая вершина достижима в пределах лимита
+- Прерывает поиск при превышении weight_limit
+- Возвращает true, если целевая вершина достижима в пределах лимита
 
 Шаги алгоритма:
 1. Проверка условий
   - Работает только для неориентированных графов
   - Возвращает ошибку для ориентированных графов
 2. Инициализация расстояний
-  - `dist[index] = MAX` для всех вершин кроме стартовой
-  - `dist[start] = 0`
-  - Пушит `(0, start)` в min-heap (BinaryHeap с инверсией)
+  - dist[index] = MAX для всех вершин кроме стартовой
+  - dist[start] = 0
+  - Пушит (0, start) в min-heap (BinaryHeap с инверсией)
 3. Основной цикл Дейкстры
   - Извлекает вершину с минимальным текущим весом
-  - Прерывает, если `weight > weight_limit`
-  - Возвращает `true`, если достигнута целевая вершина
+  - Прерывает, если weight > weight_limit
+  - Возвращает true, если достигнута целевая вершина
 4. Расслабление рёбер
-  - Для каждого соседа проверяет `new_weight = weight + edge.weight`
-  - Обновляет `dist[neighbor]`, если `new_weight < dist[neighbor]` и ≤ limit
-  - Пушит обновлённую пару `(new_weight, neighbor)` в heap
+  - Для каждого соседа проверяет new_weight = weight + edge.weight
+  - Обновляет dist[neighbor], если new_weight < dist[neighbor] и ≤ limit
+  - Пушит обновлённую пару (new_weight, neighbor) в heap
 5. Раннее завершение
-  - `weight > weight_limit` $->$ `break`
-  - `cur_node == destination` $->$ `return true`
+  - weight > weight_limit $->$ break
+  - cur_node == destination $->$ return true
 6. Результат
-  - `false`, если не удалось достичь destination в пределах лимита
+  - false, если не удалось достичь destination в пределах лимита
 
 == Примеры входных и выходных данных
 

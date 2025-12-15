@@ -3,13 +3,8 @@
 Вывести полустепень захода данной вершины орграфа.
 
 == Код (фрагменты кода)
+#set text(size: 12pt)
 ```rust
-use std::{error::Error, fmt::Debug};
-
-use serde::{Serialize, de::DeserializeOwned};
-
-use crate::graph::core::{Graph, GraphError, GraphKindError};
-
 /// Получить полустепень захода данной вершины орграфа
 pub fn task_2_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
@@ -37,6 +32,7 @@ pub fn task_2_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 }
 ```
 
+#set text(size: 14pt)
 == Краткое описание алгоритма
 Данный алгоритм вычисляет полустепень захода заданной вершины в ориентированном
 графе.

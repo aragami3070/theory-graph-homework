@@ -3,19 +3,9 @@
 Проверить, является ли граф деревом, или лесом, или не является ни тем, ни
 другим.
 == Код (фрагменты кода)
+#set text(size: 12pt)
 ```rust
-use std::{
-    collections::{HashMap, HashSet},
-    error::Error,
-    fmt::Debug,
-};
-
-use serde::{Serialize, de::DeserializeOwned};
-
-use crate::graph::core::{ColorNode, Graph, GraphError, GraphKindError, GraphType, Index};
-
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
-
 fn dfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     start: &u32,
@@ -156,6 +146,7 @@ pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 }
 ```
 
+#set text(size: 14pt)
 == Краткое описание алгоритма
 Данный алгоритм классифицирует ориентированный граф по типу: дерево, лес или обычный граф, используя DFS с раскраской вершин.
 
@@ -169,24 +160,24 @@ pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 1. Проверка условий
   - Работает только для ориентированных графов
   - Возвращает ошибку для неориентированных графов
-2. Проверка на дерево (`is_a_tree`)
-  - Инициализирует все вершины белыми (`get_nodes_with_color`)
+2. Проверка на дерево (is_a_tree)
+  - Инициализирует все вершины белыми (get_nodes_with_color)
   - Подсчитывает общее количество рёбер
   - Для каждой вершины запускает DFS с раскраской:
     - Белая $->$ Серая (в обработке)
     - Серая $->$ Чёрная (обработана)
     - Повторное посещение серой = цикл
     - Проверяет условия дерева: $|V| - |E| = 1$ и без циклов и все чёрные
-3. Проверка на лес (`is_a_forest`)
+3. Проверка на лес (is_a_forest)
   - DFS находит все компоненты связности
-  - Создаёт подграфы для каждой компоненты (`create_subgraph`)
+  - Создаёт подграфы для каждой компоненты (create_subgraph)
   - Проверяет, что ВСЕ компоненты --- деревья
 4. Иерархическая классификация
   - Пустой граф $->$ Tree
   - Связный ацикличный $->$ Tree
   - Несколько деревьев $->$ Forest
   - Иначе $->$ Default
-5. DFS с раскраской (`graph_have_cycle`)
+5. DFS с раскраской (graph_have_cycle)
   - Рекурсивно обходит граф с 3 состояниями вершин
   - Обнаруживает back edges (серые вершины) $->$ цикл
   - Завершает обработку чёрными вершинами
