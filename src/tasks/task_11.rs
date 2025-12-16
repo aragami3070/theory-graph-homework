@@ -10,10 +10,12 @@ use crate::graph::core::{Graph, GraphError, GraphKindError, Index};
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+struct BuildCapacityAndFlowResult(HashMap<(Index, Index), u32>, HashMap<(Index, Index), i32>);
+
 /// Создаем HashMap-ы для пропускных способностей и потоков
 fn build_capacity_and_flow<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
-) -> (HashMap<(Index, Index), u32>, HashMap<(Index, Index), i32>) {
+) -> BuildCapacityAndFlowResult {
     let mut capacity: HashMap<(Index, Index), u32> = HashMap::new();
 
     let mut flow: HashMap<(Index, Index), i32> = HashMap::new();
@@ -27,7 +29,7 @@ fn build_capacity_and_flow<T: Clone + DeserializeOwned + Debug + Serialize + Def
         }
     }
 
-    (capacity, flow)
+    BuildCapacityAndFlowResult(capacity, flow)
 }
 
 /// Остаточная пропускная способность от (from, to)
@@ -111,7 +113,7 @@ pub fn task_11<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             "по условию должен быть сеть (орграф)",
         )));
     }
-    let (capacity, mut flow) = build_capacity_and_flow(graph);
+    let BuildCapacityAndFlowResult(capacity, mut flow) = build_capacity_and_flow(graph);
     let mut max_flow: i32 = 0;
 
     loop {

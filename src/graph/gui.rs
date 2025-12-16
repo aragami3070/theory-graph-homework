@@ -3,12 +3,57 @@ use eframe::egui;
 use std::collections::HashMap;
 use std::collections::VecDeque;
 
+static EXAMPLE_JSON: &str = r#"{
+  "nodes": {
+    "1": { "number": 1, "value": "a" },
+    "2": { "number": 2, "value": "b" },
+    "3": { "number": 3, "value": "c" },
+    "4": { "number": 4, "value": "d" },
+    "5": { "number": 5, "value": "e" },
+    "6": { "number": 6, "value": "f" }
+  },
+  "adjacency": {
+    "1": {
+      "edges": [
+        { "node": { "number": 2, "value": "b" }, "weight": 7 },
+        { "node": { "number": 3, "value": "c" }, "weight": 4 }
+      ]
+    },
+    "2": {
+      "edges": [
+        { "node": { "number": 3, "value": "c" }, "weight": 4 },
+        { "node": { "number": 5, "value": "e" }, "weight": 2 }
+      ]
+    },
+    "3": {
+      "edges": [
+        { "node": { "number": 5, "value": "e" }, "weight": 8 },
+        { "node": { "number": 4, "value": "d" }, "weight": 4 }
+      ]
+    },
+    "4": {
+      "edges": [
+        { "node": { "number": 6, "value": "f" }, "weight": 12 }
+      ]
+    },
+    "5": {
+      "edges": [
+        { "node": { "number": 6, "value": "f" }, "weight": 5 },
+        { "node": { "number": 4, "value": "d" }, "weight": 4 }
+      ]
+    },
+    "6": { "edges": [] }
+  },
+  "is_directed": true
+}"#;
+
 struct MaxFlowVisualizer {
     json_input: String,
     json_output: String,
     graph: Option<Graph<String>>,
     node_positions: HashMap<Index, egui::Pos2>,
     show_graph: bool,
+    show_about: bool,
     s_input: String,
     t_input: String,
 
@@ -32,6 +77,7 @@ impl MaxFlowVisualizer {
             graph: None,
             node_positions: HashMap::new(),
             show_graph: false,
+            show_about: false,
             capacity: None,
             flow: None,
             current_path: None,
@@ -156,7 +202,6 @@ impl MaxFlowVisualizer {
         }
         path.reverse();
 
-        // Восстанавливаем путь
         self.current_path = Some(path.clone());
 
         // Бутылочное горлышко
@@ -202,11 +247,17 @@ impl MaxFlowVisualizer {
             if let Some(&from_pos) = self.node_positions.get(from_idx) {
                 for edge in adj {
                     let to_idx = edge.node.number;
+
+                    if **from_idx > *to_idx {
+                        continue;
+                    }
+
                     if let Some(&to_pos) = self.node_positions.get(&to_idx) {
                         let current_flow = self.residual(*from_idx, to_idx);
-                        let is_path_edge = self.current_path.as_ref().map_or(false, |path| {
-                            path.windows(2).any(|w| w == [*from_idx, to_idx])
-                        });
+                        let is_path_edge = self
+                            .current_path
+                            .as_ref()
+                            .is_some_and(|path| path.windows(2).any(|w| w == [*from_idx, to_idx]));
 
                         // Цвет и толщина в зависимости от потока и пути
                         let color = if is_path_edge {
@@ -227,7 +278,7 @@ impl MaxFlowVisualizer {
 
                         // Стрелка
                         let dir = (to_pos - from_pos).normalized();
-                        let arrow_len = 12.0;
+                        let arrow_len = 22.0;
                         let arrow_tip = to_pos;
                         let arrow_tail1 =
                             arrow_tip - dir * arrow_len + egui::Vec2::new(-dir.y, dir.x) * 6.0;
@@ -328,6 +379,9 @@ impl eframe::App for MaxFlowVisualizer {
                 });
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    if ui.button("About").clicked() {
+                        self.show_about = true;
+                    }
                     if self.show_graph && self.capacity.is_some() {
                         if ui.button("▶️ Следующий шаг").clicked() {
                             self.next_step();
@@ -432,6 +486,73 @@ impl eframe::App for MaxFlowVisualizer {
                 }
             });
         });
+        if self.show_about {
+            egui::Window::new("About")
+                .collapsible(false)
+                .resizable(false)
+                .default_width(800.0)
+                .min_width(800.0)
+                .anchor(egui::Align2::CENTER_CENTER, egui::vec2(0.0, 0.0))
+                .show(ctx, |ui| {
+                    ui.label(
+                        "Это приложение визуализирует работу алгоритма Эдмондса–Карпа\
+                        для поиска максимального потока в ориентированном графе.",
+                    );
+                    ui.separator();
+                    ui.label("Порядок работы:");
+                    ui.label(
+                        "1. Вставьте JSON графа в правое текстовое поле и нажмите \
+                        «Создать граф».",
+                    );
+                    ui.label(
+                        "2. В полях «Исток (s)» и «Сток (t)» введите индексы вершин \
+                        и нажмите «Set s» и «Set t».",
+                    );
+                    ui.label(
+                        "3. Нажмите «Запустить алгоритм» для инициализации \
+                        пропускных способностей и потоков.",
+                    );
+                    ui.label(
+                        "4. Кнопка «Следующий шаг» по одному выполняет шаги \
+                        Эдмондса–Карпа: подсвечивается текущий увеличивающий \
+                        путь, а на рёбрах показывается поток/ёмкость.",
+                    );
+                    ui.label(
+                        "5. В верхней панели отображаются номер шага, текущий \
+                        суммарный поток и, после завершения, окончательное \
+                        значение максимального потока.",
+                    );
+                    ui.label(
+                        "6. Кнопка «Сброс» очищает состояние алгоритма, но \
+                        оставляет загруженный граф, чтобы можно было запустить \
+                        визуализацию снова.",
+                    );
+
+                    ui.label(
+                        "6. Кнопка «Сброс» очищает состояние алгоритма, но \
+                        оставляет загруженный граф, чтобы можно было запустить \
+                        визуализацию снова.",
+                    );
+                    ui.separator();
+                    ui.add_space(8.0);
+                    ui.label("Пример JSON графа:");
+
+                    let mut example_json = EXAMPLE_JSON;
+
+                    ui.add(
+                        egui::TextEdit::multiline(&mut example_json)
+                            .code_editor()
+                            .desired_rows(14)
+                            .desired_width(800.0),
+                    );
+
+                    ui.add_space(8.0);
+                    ui.separator();
+                    if ui.button("Закрыть").clicked() {
+                        self.show_about = false;
+                    }
+                });
+        }
 
         ctx.request_repaint_after(std::time::Duration::from_millis(100));
     }
