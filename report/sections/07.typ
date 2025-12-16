@@ -14,7 +14,6 @@ fn has_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 ) -> bool {
     // Добавляем вершину в посещенные
     visited.insert(current);
-
     // Берем все ребра из данной вершины
     if let Some(adj) = graph.get_adjacency(&current) {
         for edge in adj {
@@ -32,7 +31,6 @@ fn has_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
     false
 }
-
 pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<Graph<T>> {
@@ -42,13 +40,10 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
             "по условию должен быть неориентированный граф",
         )));
     }
-
     // Отсортированный список ребер (список смежности)
     let edges_list = graph.get_all_edges();
-
     let mut new_graph: Graph<T> = Graph::default();
     new_graph = new_graph.to_not_directed()?;
-
     // Заполняем остов вершинами
     for (index, _) in edges_list.iter() {
         if let Some(node) = graph.get_node(index)
@@ -57,13 +52,11 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
             new_graph.add_node(node.clone())?
         }
     }
-
     // Для каждого ребра из отсортированного списка пытаемся добавить без образования цикла
     for (index, edge) in edges_list.iter() {
         if let Some(node) = graph.get_node(index) {
             // Добавляем ребро
             new_graph.add_edge(node, edge)?;
-
             // Проверяем нет ли цикла
             let mut visited = HashSet::new();
             if has_cycle(&new_graph, *index, None, &mut visited) {
@@ -72,7 +65,6 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
             }
         }
     }
-
     Ok(new_graph)
 }
 ```
@@ -117,6 +109,7 @@ pub fn task_7_kraskal<T: Clone + DeserializeOwned + Debug + Serialize + Default>
 "5": [(3, 9), (4, 11), (6, 10)],
 "6": [(4, 9), (5, 10)]
 ```
+#image("images/04.png", height: 30%)
 
 === Выходные данные
 ```

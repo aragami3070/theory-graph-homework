@@ -18,10 +18,8 @@ fn bellman_ford<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     for (index, _) in graph.iter() {
         dist.insert(*index, u32::MAX);
     }
-
     // Для вершины start длина пути 0
     dist.insert(*start, 0);
-
     // Перебираем все ребра
     for _ in 0..graph.len() - 1 {
         for (ind, adj) in graph.iter() {
@@ -37,14 +35,12 @@ fn bellman_ford<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             }
         }
     }
-
     dist.iter()
         .filter(|&(ind, _)| ind != start) // не учитываем расстояние от start
         .map(|(_, weight)| *weight)
         .filter(|&v| v != u32::MAX) // не учитываем недостижимые
         .sum::<u32>()
 }
-
 /// Найти в [`Graph<T>`] вершину, минимальные стоимости путей от которой до
 /// остальных в сумме не превосходят limit
 ///
@@ -61,14 +57,12 @@ pub fn task_9_2<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             "по условию должен быть неориентированный граф",
         )));
     }
-
     for (start, _) in graph {
         let res = bellman_ford(graph, start);
         if res > 0 && res <= *limit {
             return Ok((**start) as i32);
         }
     }
-
     // Вершина не найдена
     Ok(-1)
 }
@@ -110,9 +104,21 @@ pub fn task_9_2<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 
 === Входные данные
 ```
+"1": [(2, 7), (3, 8)],
+"2": [(1, 7), (3, 11), (4, 2)],
+"3": [(1, 8), (2, 11), (4, 6), (5, 9)],
+"4": [(2, 2), (3, 6), (5, 11), (6, 9)],
+"5": [(3, 9), (4, 11), (6, 10)],
+"6": [(4, 9), (5, 10)]
 ```
+#image("images/04.png", height: 30%)
 
 === Выходные данные
 ```
+Введите путь до файла (для временного графа):
+assets/input10.json
+Введите длину пути, которую не должны превосходить:
+40
+Найдена вершина 4
 ```
 

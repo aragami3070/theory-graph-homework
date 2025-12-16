@@ -16,10 +16,8 @@ fn dfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         // Добавялем вершину в список компонентов связности
         components.push((*start).into());
     }
-
     // Отмечаем вершину как посещенную
     visited.insert(*start);
-
     // Получаем ребра данной вершины
     if let Some(adjacency) = graph.get_adjacency(&(*start).into()) {
         for neighbor in adjacency {
@@ -29,13 +27,11 @@ fn dfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         }
     }
 }
-
 fn is_a_forest<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<bool> {
     let mut visited: HashSet<u32> = HashSet::new();
     let mut subgraphs: Vec<Graph<T>> = Vec::new();
-
     // Разбиваем граф на подграфы по связности
     for (ind, _) in graph {
         if !visited.contains(ind) {
@@ -44,7 +40,6 @@ fn is_a_forest<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             subgraphs.push(graph.create_subgraph(compnents, true)?);
         }
     }
-
     // Проверяем, что все из них деревья
     let mut is_forest = true;
     for subgraph in subgraphs {
@@ -53,10 +48,8 @@ fn is_a_forest<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             break;
         }
     }
-
     Ok(is_forest)
 }
-
 // Проверяет есть ли цикл в графе из вершины start
 fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
@@ -68,7 +61,6 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         if *color == ColorNode::Gray {
             return Ok(true);
         }
-
         // Перекрашиваем вершину в серую
         *color = ColorNode::Gray;
     } else {
@@ -77,7 +69,6 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             "Граф пустой",
         )));
     };
-
     if let Some(adjacency) = graph.get_adjacency(&(*start).into()) {
         // Проходимся по всем смежным вершинам
         for neighbor in adjacency {
@@ -93,15 +84,12 @@ fn graph_have_cycle<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             }
         }
     }
-
     if let Some(node_index) = visited.get_mut(&(*start).into()) {
         // Перекрашиваем вершину в черную
         *node_index = ColorNode::Black
     }
-
     Ok(false)
 }
-
 // Проверка является ли граф деревом
 fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
@@ -109,7 +97,6 @@ fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     let mut count = 0;
     let mut cycle = false;
     let mut is_connected = false;
-
     let mut visited = graph.get_nodes_with_color();
     for (index, adjacency) in graph {
         count += adjacency.len();
@@ -122,7 +109,6 @@ fn is_a_tree<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
     Ok((graph.len() as i64 - count as i64) == 1 && !cycle && is_connected)
 }
-
 // Проверка является ли граф деревом, лесом или обычным
 pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
@@ -133,15 +119,12 @@ pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             "по условию должен быть орграф",
         )));
     }
-
     if graph.len() == 0 || is_a_tree(graph)? {
         return Ok(GraphType::Tree);
     }
-
     if is_a_forest(graph)? {
         return Ok(GraphType::Forest);
     }
-
     Ok(GraphType::Default)
 }
 ```
@@ -195,6 +178,7 @@ pub fn task_5_18<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 "8": [],
 "90": [(4, 7)]
 ```
+#image("images/03.png", height: 30%)
 
 === Выходные данные
 ```

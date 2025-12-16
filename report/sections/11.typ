@@ -9,9 +9,7 @@ fn build_capacity_and_flow<T: Clone + DeserializeOwned + Debug + Serialize + Def
     graph: &Graph<T>,
 ) -> (HashMap<(Index, Index), u32>, HashMap<(Index, Index), i32>) {
     let mut capacity: HashMap<(Index, Index), u32> = HashMap::new();
-
     let mut flow: HashMap<(Index, Index), i32> = HashMap::new();
-
     for (&from, adj) in graph.iter() {
         for edge in adj {
             *capacity.entry((from, edge.node.number)).or_insert(0) += edge.weight;
@@ -20,10 +18,8 @@ fn build_capacity_and_flow<T: Clone + DeserializeOwned + Debug + Serialize + Def
             flow.entry((edge.node.number, from)).or_insert(0);
         }
     }
-
     (capacity, flow)
 }
-
 /// Остаточная пропускная способность от (from, to)
 fn residual(
     capacity: &HashMap<(Index, Index), u32>,
@@ -41,7 +37,6 @@ fn residual(
         c.saturating_sub(f.max(0) as u32)
     }
 }
-
 /// Поиск увеличивающего пути BFS-ом.
 fn bfs_find_path<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
@@ -52,13 +47,10 @@ fn bfs_find_path<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 ) -> (bool, HashMap<Index, Option<Index>>) {
     let mut parent: HashMap<Index, Option<Index>> = HashMap::new();
     let mut visited: HashMap<Index, bool> = HashMap::new();
-
     let mut queue = VecDeque::<Index>::new();
-
     queue.push_back(start);
     parent.insert(start, None);
     visited.insert(start, true);
-
     'bfs: while let Some(from_ind) = queue.pop_front() {
         // Прямые рёбра
         if let Some(adj) = graph.get_adjacency(&from_ind) {
@@ -84,7 +76,6 @@ fn bfs_find_path<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
                     if to == end {
                         break 'bfs;
                     }
-
                     queue.push_back(to);
                 }
             }
@@ -92,7 +83,6 @@ fn bfs_find_path<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
     (parent.contains_key(&end), parent)
 }
-
 /// Нахождение максимального потока
 pub fn task_11<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
@@ -107,13 +97,11 @@ pub fn task_11<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
     let (capacity, mut flow) = build_capacity_and_flow(graph);
     let mut max_flow: i32 = 0;
-
     loop {
         let (found, parent) = bfs_find_path(graph, &capacity, &flow, start, end);
         if !found {
             break;
         }
-
         // Находим бутылочное горлышко
         let mut path_flow: i32 = i32::MAX;
         let mut v = end;
@@ -122,7 +110,6 @@ pub fn task_11<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             path_flow = path_flow.min(r as i32);
             v = *u;
         }
-
         // Обновляем потоки вдоль пути
         let mut v2 = end;
         while let Some(Some(u)) = parent.get(&v2) {
@@ -130,10 +117,8 @@ pub fn task_11<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             *flow.entry((v2, *u)).or_insert(0) -= path_flow;
             v2 = *u;
         }
-
         max_flow += path_flow;
     }
-
     Ok(max_flow as u32)
 }
 ```
@@ -175,9 +160,21 @@ pub fn task_11<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 //
 === Входные данные
 ```
+"1": [(2, 7), (3, 8)],
+"2": [(1, 7), (3, 11), (4, 2)],
+"3": [(1, 8), (2, 11), (4, 6), (5, 9)],
+"4": [(2, 2), (3, 6), (5, 11), (6, 9)],
+"5": [(3, 9), (4, 11), (6, 10)],
+"6": [(4, 9), (5, 10)]
 ```
-
+#image("images/04.png", height: 30%)
 === Выходные данные
 ```
+Введите путь до файла (для временного графа):
+assets/input11.json
+Введите номер вершины истока:
+1
+Введите номер вершины истока:
+6
+Максимальный поток = 15
 ```
-

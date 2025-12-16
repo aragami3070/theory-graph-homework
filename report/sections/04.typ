@@ -13,9 +13,7 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         graph_1.to_directed_mut();
         graph_2.to_directed_mut();
     }
-
     let mut res_graph: Graph<T> = Graph::new(None, Adjacency::default(), graph_1.get_is_directed());
-
     // Находим и добавляем все общие вершины в граф вместе с общими ребрами
     for (index, adjacency_s) in graph_2.iter() {
         if let Some(node) = graph_1.get_node(index) {
@@ -38,7 +36,6 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             }
         }
     }
-
     Ok(res_graph)
 }
 ```
@@ -68,7 +65,7 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 "8": [],
 "90": [(90, 100), (5, 8), (2, 7)]
 ```
-#image("images/01.png", height: 50%)
+#image("images/01.png", height: 30%)
 
 второй граф
 ```
@@ -81,7 +78,7 @@ pub fn task_4_6<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 "8": [],
 "90": [(90, 100)]
 ```
-#image("images/02.png", height: 50%)
+#image("images/02.png", height: 30%)
 
 === Выходные данные
 ```

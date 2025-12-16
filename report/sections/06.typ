@@ -14,7 +14,6 @@ fn bfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     let mut queue: VecDeque<u32> = VecDeque::new();
     queue.push_back(*start);
     visited.insert(*start);
-
     // Пока в очереди есть вершины
     while let Some(current) = queue.pop_front() {
         if let Some(adjacency) = graph.get_adjacency(&current.into()) {
@@ -30,8 +29,7 @@ fn bfs<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
         }
     }
 }
-
-//// Выясняет, является ли граф связным.
+/// Выясняет, является ли граф связным.
 pub fn task_6_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
 ) -> Result<bool> {
@@ -41,13 +39,10 @@ pub fn task_6_4<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             "по условию должен быть неориентированный граф",
         )));
     }
-
     let mut visited: HashSet<u32> = HashSet::new();
-
     if let Some(node_ind) = graph.get_some_node_index() {
         bfs(graph, node_ind, &mut visited);
     }
-
     Ok(visited.len() == graph.len())
 }
 ```

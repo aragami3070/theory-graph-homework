@@ -11,11 +11,9 @@ fn floid_uorshel<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     pos_for_index: &HashMap<Index, usize>,
 ) -> Vec<Vec<u32>> {
     let mut dist = vec![vec![u32::MAX; graph.len()]; graph.len()];
-
     for (i, dst) in dist.iter_mut().enumerate() {
         dst[i] = 0;
     }
-
     // Заполняем dist минимальным расстоянием из одной вершины в другую
     for (ind_from, adj) in graph.iter() {
         let from = pos_for_index[ind_from];
@@ -24,7 +22,6 @@ fn floid_uorshel<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             dist[from][to] = dist[from][to].min(edge.weight);
         }
     }
-
     // Проходимся по всем вершинам и находим более короткие пути,
     // через другие вершины
     for middle in 0..graph.len() {
@@ -46,7 +43,6 @@ fn floid_uorshel<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     }
     dist
 }
-
 /// Найти в [`Graph<T>`] вершину, каждая из минимальных стоимостей пути от
 /// которой до остальных не превосходит limit.
 ///
@@ -63,16 +59,13 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             "по условию должен быть неориентированный граф",
         )));
     }
-
     // HashMap для сопостовления индекса вершины с индексом в dist
     let pos_for_index: HashMap<Index, usize> = graph
         .iter()
         .enumerate()
         .map(|(i, (&ind, _))| (ind, i))
         .collect();
-
     let dist = floid_uorshel(graph, &pos_for_index);
-
     'nodes: for (node_ind, cur_dists) in dist.iter().enumerate() {
         for (edge_ind, weight) in cur_dists.iter().enumerate() {
             if node_ind == edge_ind {
@@ -83,7 +76,6 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
                 continue 'nodes;
             }
         }
-
         // Если вершина подошла
         return Ok(
             match pos_for_index
@@ -100,7 +92,6 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             },
         );
     }
-
     Ok(-1)
 }
 ```
@@ -146,9 +137,21 @@ pub fn task_10_3<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 
 === Входные данные
 ```
+"1": [(2, 7), (3, 8)],
+"2": [(1, 7), (3, 11), (4, 2)],
+"3": [(1, 8), (2, 11), (4, 6), (5, 9)],
+"4": [(2, 2), (3, 6), (5, 11), (6, 9)],
+"5": [(3, 9), (4, 11), (6, 10)],
+"6": [(4, 9), (5, 10)]
 ```
+#image("images/04.png", height: 30%)
 
 === Выходные данные
 ```
+Введите путь до файла (для временного графа):
+assets/input10.json
+Введите длину пути, которую не должны превосходить:
+11
+Найдена вершина 4
 ```
 

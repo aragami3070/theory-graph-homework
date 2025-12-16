@@ -49,7 +49,7 @@ pub fn task_3_5<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 "8": [],
 "90": [(90, 100), (5, 8), (2, 7)]
 ```
-#image("images/01.png", height: 50%)
+#image("images/01.png", height: 30%)
 
 === Выходные данные
 ```

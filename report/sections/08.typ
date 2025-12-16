@@ -14,32 +14,26 @@ fn deikstra<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
 ) -> bool {
     let mut dist = HashMap::new();
     let mut heap = BinaryHeap::new();
-
     // Для всех вершин кроме начальной выставляем максимум
     for (index, _) in graph.iter() {
         dist.insert(*index, u32::MAX);
     }
-
     // Ставим 0 для начальной вершины
     dist.insert(start, 0);
     heap.push((0u32, start));
-
     while let Some((weight, cur_node)) = heap.pop() {
         // Если длина уже больше weight_limit, то нет смысла считать дальше
         if weight > weight_limit {
             break;
         }
-
         // Если дошли до нужной вершины
         if cur_node == destination {
             return true;
         }
-
         if let Some(adj) = graph.get_adjacency(&cur_node) {
             for edge in adj {
                 let node = edge.node.number;
                 let new_weight = weight + edge.weight;
-
                 // Если сосдед не посящен
                 if new_weight < dist[&node] && new_weight <= weight_limit {
                     dist.insert(node, new_weight);
@@ -48,10 +42,8 @@ fn deikstra<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             }
         }
     }
-
     false
 }
-
 pub fn task_8_1<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
     graph: &Graph<T>,
     start: u32,
@@ -64,7 +56,6 @@ pub fn task_8_1<T: Clone + DeserializeOwned + Debug + Serialize + Default>(
             "по условию должен быть неориентированный граф",
         )));
     }
-
     Ok(deikstra(
         graph,
         start.into(),
@@ -119,6 +110,7 @@ weight_limit:
 "5": [(3, 9), (4, 11), (6, 10)],
 "6": [(4, 9), (5, 10)]
 ```
+#image("images/04.png", height: 30%)
 
 === Выходные данные
 ```
