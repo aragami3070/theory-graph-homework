@@ -261,4 +261,12 @@ pub fn gui_interface() -> Result<(), eframe::Error> {
     )
 }
 ```
-
+== Примеры использования
+#image("images/05.png", height: 30%)
+#image("images/06.png", height: 60%)
+#image("images/07.png", height: 30%)
+#image("images/08.png", height: 30%)
+#image("images/09.png", height: 30%)
+#image("images/10.png", height: 30%)
+#image("images/11.png", height: 30%)
+#image("images/12.png", height: 30%)
